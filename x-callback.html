@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dragon Hood — X Authorization</title>
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #050505;
+      color: #00ff66;
+      font-family: 'Courier New', Courier, monospace;
+    }
+    .box {
+      width: min(700px, 90%);
+      padding: 30px;
+      border: 1px solid rgba(0,255,102,0.4);
+      background: #071009;
+      box-shadow: 0 0 30px rgba(0,255,102,0.12);
+    }
+    h1 {
+      color: #fff;
+      font-size: 20px;
+      margin-top: 0;
+    }
+    #status {
+      white-space: pre-wrap;
+      line-height: 1.6;
+      font-size: 13px;
+    }
+    .error { color: #ff5c5c; }
+    .success { color: #00ff66; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h1># DRAGONHOOD — X AUTHORIZATION</h1>
+    <div id="status">Processing X authorization...</div>
+  </div>
+
+<script>
+// dragonhood.xyz par live aur localhost dono par auto-match hoga[cite: 7]
+const X_REDIRECT_URI = window.location.origin.includes("dragonhood.xyz")
+  ? "https://dragonhood.xyz/x-callback.html"
+  : window.location.origin + "/x-callback.html";
+
+const statusBox = document.getElementById("status");[cite: 7]
+
+function showStatus(message, type = "") {
+  statusBox.className = type;[cite: 7]
+  statusBox.textContent = message;[cite: 7]
+}
+
+async function main() {
+  try {
+    const params = new URLSearchParams(window.location.search);[cite: 7]
+    const code = params.get("code");[cite: 7]
+    const returnedState = params.get("state");[cite: 7]
+    const oauthError = params.get("error");[cite: 7]
+    const oauthErrorDescription = params.get("error_description");[cite: 7]
+
+    if (oauthError) {
+      throw new Error(oauthErrorDescription || oauthError);[cite: 7]
+    }
+
+    if (!code) {
+      throw new Error("No authorization code returned by X.");[cite: 7]
+    }
+
+    const savedState = sessionStorage.getItem("x_oauth_state");[cite: 7]
+    if (!savedState) {
+      throw new Error("OAuth session expired. Please return and connect X again.");[cite: 7]
+    }
+
+    if (returnedState !== savedState) {
+      throw new Error("OAuth state mismatch.");[cite: 7]
+    }
+
+    const codeVerifier = sessionStorage.getItem("x_code_verifier");[cite: 7]
+    if (!codeVerifier) {
+      throw new Error("PKCE code verifier is missing. Please connect X again.");[cite: 7]
+    }
+
+    showStatus("Exchanging authorization code with X...");[cite: 7]
+
+    const tokenResponse = await fetch("/api/x-token", {[cite: 7]
+      method: "POST",[cite: 7]
+      headers: { "Content-Type": "application/json" },[cite: 7]
+      body: JSON.stringify({[cite: 7]
+        code: code,[cite: 7]
+        code_verifier: codeVerifier,[cite: 7]
+        redirect_uri: X_REDIRECT_URI[cite: 7]
+      })
+    });
+
+    const tokenText = await tokenResponse.text();[cite: 7]
+    let tokenData;[cite: 7]
+
+    try {
+      tokenData = JSON.parse(tokenText);[cite: 7]
+    } catch (error) {
+      throw new Error("Token server returned invalid JSON:\n\n" + tokenText.substring(0, 1000));[cite: 7]
+    }
+
+    if (!tokenResponse.ok) {
+      throw new Error("X token exchange failed (" + tokenResponse.status + "):\n\n" + JSON.stringify(tokenData, null, 2));[cite: 7]
+    }
+
+    if (!tokenData.access_token) {
+      throw new Error("X did not return an access token.\n\n" + JSON.stringify(tokenData, null, 2));[cite: 7]
+    }
+
+    showStatus("Authorization successful. Loading X account...");[cite: 7]
+
+    const meResponse = await fetch("/api/x-me", {[cite: 7]
+      method: "POST",[cite: 7]
+      headers: { "Content-Type": "application/json" },[cite: 7]
+      body: JSON.stringify({ access_token: tokenData.access_token })[cite: 7]
+    });
+
+    const meText = await meResponse.text();[cite: 7]
+    let meData;[cite: 7]
+
+    try {
+      meData = JSON.parse(meText);[cite: 7]
+    } catch (error) {
+      throw new Error("X user endpoint returned invalid JSON:\n\n" + meText.substring(0, 1000));[cite: 7]
+    }
+
+    if (!meResponse.ok) {
+      throw new Error("X /2/users/me failed (" + meResponse.status + "):\n\n" + JSON.stringify(meData, null, 2));[cite: 7]
+    }
+
+    if (!meData.data) {
+      throw new Error("X account information was not returned.\n\n" + JSON.stringify(meData, null, 2));[cite: 7]
+    }
+
+    const xUserId = meData.data.id || "";[cite: 7]
+    const xUserHandle = meData.data.username ? "@" + meData.data.username : "";[cite: 7]
+
+    sessionStorage.setItem("x_user_id", xUserId);[cite: 7]
+    sessionStorage.setItem("x_user_handle", xUserHandle);[cite: 7]
+    sessionStorage.setItem("x_access_token", tokenData.access_token);[cite: 7]
+    sessionStorage.setItem("x_authenticated", "true");
+
+    if (tokenData.refresh_token) {
+      sessionStorage.setItem("x_refresh_token", tokenData.refresh_token);[cite: 7]
+    }
+
+    sessionStorage.removeItem("x_oauth_state");[cite: 7]
+    sessionStorage.removeItem("x_code_verifier");[cite: 7]
+
+    showStatus(
+      "X authorization successful.\n\n" +[cite: 7]
+      "Connected account: " + (xUserHandle || "@user") + "\n\n" +[cite: 7]
+      "Redirecting to whitelist tasks...",
+      "success"[cite: 7]
+    );
+
+    setTimeout(function () {
+      window.location.replace("/index.html?screen=tasks");
+    }, 300);
+
+  } catch (error) {
+    console.error("X OAuth error:", error);[cite: 7]
+    showStatus("X authorization failed:\n\n" + (error.message || String(error)), "error");[cite: 7]
+  }
+}
+
+main();[cite: 7]
+</script>
+</body>
+</html>

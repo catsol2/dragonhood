@@ -25,19 +25,9 @@
       overflow-x: hidden;
     }
 
+    /* Scanlines completely removed for crystal clean text */
     .crt-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: linear-gradient(
-        rgba(18, 16, 16, 0) 50%,
-        rgba(0, 0, 0, 0.45) 50%
-      );
-      background-size: 100% 3px;
-      pointer-events: none !important;
-      z-index: 9999;
+      display: none !important;
     }
 
     .video-layer {
@@ -48,71 +38,69 @@
       height: 100vh;
       object-fit: cover;
       opacity: 0.18;
-      pointer-events: none;
+      pointer-events: none !important;
       z-index: 1;
     }
 
     header {
       position: relative;
-      z-index: 20;
+      z-index: 30;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 10px 16px;
+      padding: 12px 20px;
       border-bottom: 1px solid rgba(0, 255, 102, 0.3);
       background: rgba(5, 5, 5, 0.95);
-      font-size: 12px;
-      gap: 8px;
+      font-size: 13px;
     }
 
     .badge-rh {
       border: 1px solid #ffb800;
       color: #ffb800;
       background: rgba(255, 184, 0, 0.1);
-      padding: 2px 6px;
+      padding: 2px 8px;
       border-radius: 3px;
-      font-size: 10px;
-      margin-left: 4px;
+      font-size: 11px;
+      margin-left: 8px;
       font-weight: bold;
-      white-space: nowrap;
     }
 
     main {
       position: relative;
-      z-index: 20;
+      z-index: 30;
       flex-grow: 1;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 12px;
+      padding: 16px;
       width: 100%;
     }
 
     .term-box {
       width: 100%;
       max-width: 720px;
-      background: rgba(7, 16, 9, 0.96);
+      background: rgba(7, 16, 9, 0.98);
       border: 1px solid rgba(0, 255, 102, 0.4);
-      box-shadow: 0 0 25px rgba(0, 255, 102, 0.1);
+      box-shadow: 0 0 30px rgba(0, 255, 102, 0.12);
       border-radius: 6px;
-      padding: 20px;
+      padding: 24px;
       margin: auto;
     }
 
     .log-line {
-      margin-bottom: 6px;
+      margin-bottom: 7px;
       color: #00ff66;
-      font-size: 12px;
+      font-size: 13px;
       line-height: 1.4;
       word-break: break-word;
     }
 
     .btn {
-      padding: 10px 14px;
+      padding: 10px 16px;
       font-weight: bold;
       cursor: pointer;
       border-radius: 4px;
-      font-size: 11px;
+      font-size: 12px;
       text-transform: uppercase;
       display: inline-block;
       text-align: center;
@@ -121,75 +109,33 @@
       user-select: none;
     }
 
-    .btn-green {
-      background: #00ff66;
-      color: #000;
-    }
-
-    .btn-green:hover {
-      background: #33ff88;
-      box-shadow: 0 0 15px rgba(0, 255, 102, 0.5);
-    }
-
-    .btn-outline {
-      background: transparent;
-      border: 1px solid rgba(0, 255, 102, 0.5);
-      color: #00ff66;
-    }
-
-    .btn-outline:hover {
-      background: rgba(0, 255, 102, 0.15);
-      border-color: #00ff66;
-    }
-
-    .btn-amber {
-      background: #ffb800;
-      color: #000;
-    }
-
-    .btn-amber:hover {
-      background: #ffd04d;
-      box-shadow: 0 0 12px rgba(255, 184, 0, 0.4);
-    }
-
-    .btn-check {
-      background: #00ff66;
-      color: #000;
-      padding: 6px 12px;
-      font-size: 11px;
-    }
+    .btn-green { background: #00ff66; color: #000; }
+    .btn-green:hover { background: #33ff88; box-shadow: 0 0 15px rgba(0, 255, 102, 0.5); }
+    .btn-outline { background: transparent; border: 1px solid rgba(0, 255, 102, 0.5); color: #00ff66; }
+    .btn-outline:hover { background: rgba(0, 255, 102, 0.15); border-color: #00ff66; }
+    .btn-amber { background: #ffb800; color: #000; }
+    .btn-amber:hover { background: #ffd04d; box-shadow: 0 0 12px rgba(255, 184, 0, 0.4); }
+    .btn-check { background: #00ff66; color: #000; padding: 6px 14px; font-size: 11px; }
 
     .specimen-grid {
       display: flex;
-      gap: 16px;
+      gap: 20px;
       flex-wrap: wrap;
       margin-top: 15px;
     }
 
-    .specimen-col-left {
-      flex: 1;
-      min-width: 220px;
-      text-align: center;
-    }
-
-    .specimen-col-right {
-      flex: 1.2;
-      min-width: 240px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
+    .specimen-col-left { flex: 1; min-width: 220px; text-align: center; }
+    .specimen-col-right { flex: 1.2; min-width: 250px; display: flex; flex-direction: column; justify-content: space-between; }
 
     .dragon-preview-img {
-      width: 100%;
-      max-width: 220px;
+      width: 220px;
       height: 220px;
       object-fit: cover;
       border: 1px solid rgba(0, 255, 102, 0.4);
       border-radius: 4px;
       margin: 0 auto;
       display: block;
-      background: #000;
+      background: #001a08;
     }
 
     .billboard {
@@ -199,35 +145,18 @@
       padding: 6px;
       border-radius: 4px;
     }
-
-    .billboard small {
-      color: #ffb800;
-      display: block;
-      font-size: 9px;
-    }
-
-    .billboard span {
-      color: #fff;
-      font-size: 11px;
-      font-weight: bold;
-    }
+    .billboard small { color: #ffb800; display: block; font-size: 9px; }
+    .billboard span { color: #fff; font-size: 12px; font-weight: bold; }
 
     .trait-row {
       display: flex;
       justify-content: space-between;
       border-bottom: 1px solid rgba(0, 255, 102, 0.15);
       padding: 6px 0;
-      font-size: 11px;
+      font-size: 12px;
     }
-
-    .trait-label {
-      color: rgba(0, 255, 102, 0.6);
-    }
-
-    .trait-val {
-      color: #fff;
-      font-weight: bold;
-    }
+    .trait-label { color: rgba(0, 255, 102, 0.7); }
+    .trait-val { color: #fff; font-weight: bold; }
 
     .thumbs-row {
       display: flex;
@@ -245,12 +174,8 @@
       border-radius: 3px;
     }
 
-    .thumb:hover {
-      border-color: #00ff66;
-    }
-
     .task-card {
-      background: rgba(0, 22, 11, 0.7);
+      background: rgba(0, 22, 11, 0.85);
       border: 1px solid rgba(0, 255, 102, 0.3);
       border-radius: 4px;
       padding: 12px;
@@ -260,39 +185,19 @@
       align-items: center;
       gap: 10px;
     }
-
-    .task-card.done {
-      border-color: #00ff66;
-      background: rgba(0, 255, 102, 0.08);
-    }
-
-    .task-title {
-      font-size: 12px;
-      font-weight: bold;
-      color: #fff;
-    }
-
-    .task-desc {
-      font-size: 11px;
-      color: rgba(0, 255, 102, 0.7);
-      margin-top: 2px;
-    }
+    .task-card.done { border-color: #00ff66; background: rgba(0, 255, 102, 0.1); }
+    .task-title { font-size: 12px; font-weight: bold; color: #fff; }
+    .task-desc { font-size: 11px; color: rgba(0, 255, 102, 0.8); margin-top: 2px; }
 
     .form-control {
       width: 100%;
-      background: rgba(0, 20, 10, 0.85);
+      background: rgba(0, 20, 10, 0.9);
       border: 1px solid rgba(0, 255, 102, 0.4);
       color: #00ff66;
       padding: 9px;
-      font-size: 12px;
+      font-size: 13px;
       border-radius: 4px;
       margin-top: 4px;
-    }
-
-    .form-control:focus {
-      outline: none;
-      border-color: #00ff66;
-      box-shadow: 0 0 10px rgba(0, 255, 102, 0.4);
     }
 
     .ticket-card {
@@ -315,75 +220,27 @@
 
     footer {
       position: relative;
-      z-index: 20;
+      z-index: 30;
       display: flex;
       justify-content: space-between;
-      padding: 10px 16px;
+      padding: 10px 20px;
       border-top: 1px solid rgba(0, 255, 102, 0.2);
       background: rgba(5, 5, 5, 0.95);
-      font-size: 10px;
+      font-size: 11px;
       color: rgba(0, 255, 102, 0.6);
       flex-wrap: wrap;
       gap: 6px;
     }
 
-    .hidden {
-      display: none !important;
-    }
-
-    /* ========================================================
-       MOBILE RESPONSIVE TWEAKS
-       ======================================================== */
-    @media (max-width: 600px) {
-      header {
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 8px 12px;
-      }
-
-      header > div:last-child {
-        width: 100%;
-        justify-content: space-between;
-        margin-top: 6px;
-      }
-
-      .term-box {
-        padding: 14px;
-      }
-
-      .specimen-grid {
-        flex-direction: column;
-      }
-
-      .specimen-col-left, .specimen-col-right {
-        width: 100%;
-        min-width: 100%;
-      }
-
-      .dragon-preview-img {
-        max-width: 180px;
-        height: 180px;
-      }
-
-      .task-card {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .task-card > div:last-child {
-        width: 100%;
-        margin-top: 8px;
-        text-align: right;
-      }
-
-      .task-card .btn {
-        width: 100%;
-      }
-
-      footer {
-        flex-direction: column;
-        text-align: center;
-      }
+    @media (max-width: 650px) {
+      header { flex-direction: column; align-items: flex-start; gap: 8px; }
+      header > div:last-child { width: 100%; display: flex; justify-content: space-between; }
+      .term-box { padding: 14px; }
+      .specimen-grid { flex-direction: column; }
+      .task-card { flex-direction: column; align-items: flex-start; }
+      .task-card > div:last-child { width: 100%; margin-top: 8px; }
+      .task-card .btn { width: 100%; }
+      footer { flex-direction: column; text-align: center; }
     }
   </style>
 </head>
@@ -402,8 +259,8 @@
       <span class="badge-rh">ROBINHOOD CHAIN</span>
     </div>
 
-    <div style="display: flex; align-items: center; gap: 8px;">
-      <button class="btn btn-outline" style="padding: 4px 8px; font-size: 10px;" onclick="toggleAudio(event)">
+    <div>
+      <button class="btn btn-outline" style="padding: 4px 10px; font-size: 10px;" onclick="toggleAudio(event)">
         [ SOUND: <span id="soundLabel">ON</span> ]
       </button>
 
@@ -416,16 +273,16 @@
   <main>
 
     <!-- SCREEN 1: BOOT -->
-    <div id="screenBoot" class="term-box">
+    <div id="screenBoot" class="term-box" style="display: block;">
       <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(0,255,102,0.2); padding-bottom: 8px;">
-        <strong style="color:#fff; font-size: 12px;">DRAGON HOOD OS — draconic kernel</strong>
-        <span style="color:#ffb800; font-size: 10px; font-weight: bold;">1,222 FREE MINTS</span>
+        <strong style="color:#fff;">DRAGON HOOD OS — draconic kernel</strong>
+        <span style="color:#ffb800; font-size: 11px;">1,222 FREE MINTS</span>
       </div>
 
-      <div id="bootLogs" style="min-height: 160px; padding: 12px 0;"></div>
+      <div id="bootLogs" style="min-height: 180px; padding: 14px 0;"></div>
 
       <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(0,255,102,0.2); padding-top: 10px; gap: 8px; flex-wrap: wrap;">
-        <span style="font-size: 12px;">drac@robinhood:~$ _</span>
+        <span>drac@robinhood:~$ _</span>
         <button class="btn btn-amber" style="flex-grow: 1; max-width: 250px;" onclick="goToSpecimenScreen()">
           [ PROCEED TO SPECIMEN → ]
         </button>
@@ -433,21 +290,20 @@
     </div>
 
     <!-- SCREEN 2: SPECIMEN -->
-    <div id="screenSpecimen" class="term-box hidden">
+    <div id="screenSpecimen" class="term-box" style="display: none;">
       <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0,255,102,0.3); padding-bottom: 10px;">
         <div>
           <small style="color: rgba(0,255,102,0.7); display:block;">> leaking hood specimens…</small>
-          <h2 style="color:#fff; font-size: 16px;">SPECIMEN <span id="specimenNo">0333</span> / 1222</h2>
+          <h2 style="color:#fff;">SPECIMEN <span id="specimenNo">0333</span> / 1222</h2>
         </div>
         <div>
-          <span class="badge-rh" style="font-size: 11px; padding: 4px 8px;">FREE MINT (0.00 RH)</span>
+          <span class="badge-rh" style="font-size: 12px; padding: 5px 10px;">FREE MINT (0.00 RH)</span>
         </div>
       </div>
 
       <div class="specimen-grid">
         <div class="specimen-col-left">
-          <img id="dragonMainImg" class="dragon-preview-img" src="1000287031 (1).jpg" alt="Dragon" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'220\' height=\'220\'%3E%3Crect width=\'220\' height=\'220\' fill=\'%23001a08\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' dominant-baseline=\'middle\' text-anchor=\'middle\' fill=\'%2300ff66\' font-size=\'14\'%3E%5B DRAGON PREVIEW %5D%3C/text%3E%3C/svg%3E'">
-
+          <img id="dragonMainImg" class="dragon-preview-img" src="1000287031 (1).jpg" alt="Dragon" onerror="this.src='1000287233 (1).jpg'">
           <div class="billboard">
             <small>BILLBOARD BROADCAST</small>
             <span>Coming soon on Robinhood Chain</span>
@@ -465,14 +321,14 @@
           <div>
             <small style="display:block; color:rgba(0,255,102,0.6); margin-top:8px;">SPECIMEN SELECTION:</small>
             <div class="thumbs-row">
-              <img src="1000287031 (1).jpg" onclick="switchSpecimen(0)" class="thumb" alt="1" onerror="this.style.display='none'">
-              <img src="1000287233 (1).jpg" onclick="switchSpecimen(1)" class="thumb" alt="2" onerror="this.style.display='none'">
-              <img src="1000287234 (1).jpg" onclick="switchSpecimen(2)" class="thumb" alt="3" onerror="this.style.display='none'">
-              <img src="1000287235 (1).jpg" onclick="switchSpecimen(3)" class="thumb" alt="4" onerror="this.style.display='none'">
+              <img src="1000287031 (1).jpg" onclick="switchSpecimen(0)" class="thumb" alt="1">
+              <img src="1000287233 (1).jpg" onclick="switchSpecimen(1)" class="thumb" alt="2">
+              <img src="1000287234 (1).jpg" onclick="switchSpecimen(2)" class="thumb" alt="3">
+              <img src="1000287235 (1).jpg" onclick="switchSpecimen(3)" class="thumb" alt="4">
             </div>
           </div>
 
-          <div style="display:flex; gap:8px; margin-top:10px;">
+          <div style="display:flex; gap:10px; margin-top:10px;">
             <button class="btn btn-outline" style="flex:1;" onclick="nextSpecimen()">[ REROLL ]</button>
             <button class="btn btn-green" style="flex:1.4;" onclick="openXGateScreen()">[ APPLY WHITELIST → ]</button>
           </div>
@@ -481,79 +337,75 @@
     </div>
 
     <!-- SCREEN 3: X CONNECT -->
-    <div id="screenXConnect" class="term-box hidden" style="text-align: center;">
-      <div style="border-bottom: 1px solid rgba(0,255,102,0.2); padding-bottom: 10px; margin-bottom: 16px;">
-        <span style="color:#ffb800; font-size:10px; font-weight:bold;">> X IDENTITY AUTHENTICATION</span>
-        <h2 style="color:#fff; margin-top:4px; font-size: 16px;">CONNECT X (TWITTER) PROFILE</h2>
+    <div id="screenXConnect" class="term-box" style="display: none; text-align: center;">
+      <div style="border-bottom: 1px solid rgba(0,255,102,0.2); padding-bottom: 10px; margin-bottom: 20px;">
+        <span style="color:#ffb800; font-size:11px; font-weight:bold;">> X IDENTITY AUTHENTICATION</span>
+        <h2 style="color:#fff; margin-top:4px;">CONNECT X (TWITTER) PROFILE</h2>
         <small style="color: rgba(0,255,102,0.6); display: block; margin-top: 4px;">Authorize your X account to enter the Robinhood Chain Whitelist Tasks.</small>
       </div>
 
       <div style="max-width: 440px; margin: 0 auto; text-align: center;">
         <div id="xAuthStatus" style="color:#ffb800; font-size:12px; margin-bottom:15px;">X account authorization required.</div>
-        <button class="btn btn-green" style="width: 100%; padding: 12px; font-size: 12px;" onclick="connectXAccount()">
+        <button class="btn btn-green" style="width: 100%; padding: 12px; font-size: 13px;" onclick="connectXAccount()">
           [ 𝕏 CONNECT & AUTHORIZE WITH X ]
         </button>
       </div>
 
-      <div style="margin-top: 16px;">
+      <div style="margin-top: 20px;">
         <button class="btn btn-outline" style="width: 100%; max-width: 250px;" onclick="goToSpecimenScreen()">[ ← BACK TO SPECIMENS ]</button>
       </div>
     </div>
 
     <!-- SCREEN 4: TASKS -->
-    <div id="screenTasksForm" class="term-box hidden">
+    <div id="screenTasksForm" class="term-box" style="display: none;">
       <div style="border-bottom: 1px solid rgba(0,255,102,0.3); padding-bottom: 10px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 8px;">
         <div>
-          <span style="color:#ffb800; font-size:10px; font-weight:bold;">> WHITELIST TASK PIPELINE</span>
-          <h2 style="color:#fff; margin-top:2px; font-size: 16px;">ROBINHOOD CHAIN PROTOCOL</h2>
+          <span style="color:#ffb800; font-size:11px; font-weight:bold;">> WHITELIST TASK PIPELINE</span>
+          <h2 style="color:#fff; margin-top:2px;">ROBINHOOD CHAIN PROTOCOL</h2>
         </div>
         <div style="text-align: right;">
           <small style="color: rgba(0,255,102,0.6);">CONNECTED AS:</small>
-          <div id="displayConnectedX" style="color: #ffb800; font-weight: bold; font-size: 12px;">@user</div>
+          <div id="displayConnectedX" style="color: #ffb800; font-weight: bold; font-size: 13px;">@user</div>
         </div>
       </div>
 
-      <!-- TASK 1 -->
       <div class="task-card" id="task1Card">
         <div>
           <div class="task-title">1. FOLLOW @DragoonHood ON 𝕏</div>
           <div class="task-desc" id="task1Status">Click follow, redirect hone ke baad check karein.</div>
         </div>
-        <div id="task1Actions">
-          <button class="btn btn-outline" onclick="doFollowTask()">[ FOLLOW ]</button>
+        <div>
+          <button class="btn btn-outline" id="task1Btn" onclick="doFollowTask()">[ FOLLOW ]</button>
         </div>
       </div>
 
-      <!-- TASK 2 -->
       <div class="task-card" id="task2Card">
         <div>
           <div class="task-title">2. LIKE & RETWEET ANNOUNCEMENT</div>
           <div class="task-desc" id="task2Status">Official Genesis post ko Like & Retweet karein.</div>
         </div>
-        <div id="task2Actions">
-          <button class="btn btn-outline" onclick="doRtTask()">[ LIKE & RT ]</button>
+        <div>
+          <button class="btn btn-outline" id="task2Btn" onclick="doRtTask()">[ LIKE & RT ]</button>
         </div>
       </div>
 
-      <!-- TASK 3 -->
       <div class="task-card" id="task3Card" style="display: block;">
         <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap;">
           <div>
             <div class="task-title">3. TWEET PROOF OF APPLICATION</div>
             <div class="task-desc" id="task3Status">Click Tweet (Free Mint 1,222 supply text loaded).</div>
           </div>
-          <div id="task3Actions" style="margin-top: 6px;">
-            <button class="btn btn-outline" onclick="doTweetTask()">[ 𝕏 POST TWEET ]</button>
+          <div style="margin-top: 6px;">
+            <button class="btn btn-outline" id="task3Btn" onclick="doTweetTask()">[ 𝕏 POST TWEET ]</button>
           </div>
         </div>
 
-        <div id="tweetInputBox" style="margin-top: 10px;" class="hidden">
-          <label style="font-size: 10px; color: #ffb800;">PASTE YOUR SUBMITTED TWEET LINK:</label>
+        <div id="tweetInputBox" style="margin-top: 10px; display: none;">
+          <label style="font-size: 11px; color: #ffb800;">PASTE YOUR SUBMITTED TWEET LINK:</label>
           <input type="url" id="tweetUrlInput" placeholder="https://x.com/username/status/..." class="form-control">
         </div>
       </div>
 
-      <!-- TASK 4 -->
       <div class="task-card" style="display: block;">
         <div style="display: flex; justify-content: space-between;">
           <div class="task-title">4. ROBINHOOD CHAIN / EVM WALLET ADDRESS</div>
@@ -563,16 +415,16 @@
         <small style="color: rgba(0,255,102,0.5); font-size: 10px; display: block; margin-top: 4px;">Direct address entry. Aapka free mint pass is address se bind hoga.</small>
       </div>
 
-      <div style="display: flex; gap: 8px; margin-top: 15px; flex-wrap: wrap;">
+      <div style="display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap;">
         <button class="btn btn-outline" style="flex: 1;" onclick="openXGateScreen()">[ ← BACK ]</button>
         <button class="btn btn-green" style="flex: 2;" onclick="submitFinalRegistration()">[ SUBMIT WHITELIST ENTRY ]</button>
       </div>
     </div>
 
     <!-- SCREEN 5: TICKET -->
-    <div id="screenTicket" class="term-box hidden" style="text-align: center;">
-      <h2 style="color:#fff; margin-bottom: 4px; font-size: 16px;">WHITELIST APPLICATION GRANTED</h2>
-      <p style="font-size: 11px; color: rgba(0,255,102,0.7);">Your details are cryptographically queued for Robinhood Chain Lair.</p>
+    <div id="screenTicket" class="term-box" style="display: none; text-align: center;">
+      <h2 style="color:#fff; margin-bottom: 4px;">WHITELIST APPLICATION GRANTED</h2>
+      <p style="font-size: 12px; color: rgba(0,255,102,0.7);">Your details are cryptographically queued for Robinhood Chain Lair.</p>
 
       <div class="ticket-card">
         <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(0,255,102,0.2); padding-bottom:6px; margin-bottom:10px;">
@@ -580,7 +432,7 @@
           <span id="passId" style="color:#fff; font-weight:bold;">#RH-DRAGON-0421</span>
         </div>
 
-        <div style="font-size:11px; line-height: 1.8;">
+        <div style="font-size:12px; line-height: 1.8;">
           <div>CHAIN: <strong style="color:#fff;">Robinhood Chain</strong></div>
           <div>MAX SUPPLY: <strong style="color:#fff;">1,222</strong></div>
           <div>MINT COST: <strong style="color:#00ff66;">0.00 RH (FREE MINT)</strong></div>
@@ -597,8 +449,8 @@
         <div style="word-break: break-all;">WALLET ADDRESS: <strong id="recWallet" style="color:#fff;">-</strong></div>
       </div>
 
-      <div style="display:flex; gap:8px; margin-top: 15px; flex-wrap: wrap;">
-        <a id="tweetFlexBtn" target="_blank" class="btn" style="background:#1d9bf0; color:#fff; flex:1; text-decoration:none;">FLEX ON X</a>
+      <div style="display:flex; gap:10px; margin-top: 15px; flex-wrap: wrap;">
+        <a id="tweetFlexBtn" target="_blank" class="btn" style="background:#1d9bf0; color:#fff; flex:1; text-decoration:none;">FLEX ON X (TWITTER)</a>
         <button class="btn btn-outline" style="flex:1;" onclick="goToSpecimenScreen()">[ VIEW SPECIMENS ]</button>
       </div>
     </div>
@@ -611,12 +463,9 @@
   </footer>
 
   <script>
-    const X_CLIENT_ID = "clFGTHhES1UzWkhsbzNOb1pKMzk6MTpjaQ";
-    const X_REDIRECT_URI = window.location.origin.includes("dragonhood.xyz")
-      ? "https://dragonhood.xyz/x-callback.html"
-      : window.location.origin + "/x-callback.html";
-
-    const X_AUTHORIZE_URL = "https://twitter.com/i/oauth2/authorize";
+    // New Updated Client ID from Console
+    const X_CLIENT_ID = "czRuem5WemdvdXh2SmUwbDhCMjI6MTpjaQ";
+    const X_REDIRECT_URI = "https://dragonhood.xyz/x-callback.html";
 
     let audioCtx = null;
     let soundEnabled = true;
@@ -630,20 +479,22 @@
     }
 
     function ensureAudioOn() {
-      if (!audioCtx) initAudio();
+      initAudio();
       if (audioCtx && audioCtx.state === 'suspended') {
         audioCtx.resume().catch(() => {});
       }
     }
 
-    function playTone(freq, dur = 0.05, type = 'square') {
-      if (!soundEnabled || !audioCtx) return;
+    function playTone(freq, dur = 0.05) {
+      if (!soundEnabled) return;
       try {
+        ensureAudioOn();
+        if (!audioCtx) return;
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
-        osc.type = type;
+        osc.type = 'square';
         osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-        gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.03, audioCtx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
         osc.connect(gain);
         gain.connect(audioCtx.destination);
@@ -678,7 +529,6 @@
     function executeBoot() {
       const box = document.getElementById("bootLogs");
       if (!box) return;
-
       if (bootInterval) clearInterval(bootInterval);
 
       bootInterval = setInterval(() => {
@@ -687,20 +537,22 @@
           div.className = "log-line";
           div.innerText = bootSteps[stepIdx];
           box.appendChild(div);
-          playTone(480 + (stepIdx * 50), 0.03);
+          playTone(480 + (stepIdx * 40), 0.02);
           stepIdx++;
         } else {
           clearInterval(bootInterval);
           bootInterval = null;
-          setTimeout(() => {
-            goToSpecimenScreen();
-          }, 800);
+          setTimeout(() => { goToSpecimenScreen(); }, 800);
         }
-      }, 180);
+      }, 150);
     }
 
-    function hideAllScreens() {
-      document.querySelectorAll(".term-box").forEach(el => el.classList.add("hidden"));
+    function showOnlyScreen(screenId) {
+      const screens = ["screenBoot", "screenSpecimen", "screenXConnect", "screenTasksForm", "screenTicket"];
+      screens.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = (id === screenId) ? "block" : "none";
+      });
     }
 
     function goToSpecimenScreen() {
@@ -708,26 +560,20 @@
         clearInterval(bootInterval);
         bootInterval = null;
       }
-      hideAllScreens();
+      showOnlyScreen("screenSpecimen");
       const topSkip = document.getElementById("topSkipBtn");
-      if (topSkip) topSkip.classList.add("hidden");
+      if (topSkip) topSkip.style.display = "none";
       
-      const specimenScreen = document.getElementById("screenSpecimen");
-      if (specimenScreen) specimenScreen.classList.remove("hidden");
-
       const headerPhase = document.getElementById("headerPhase");
       if (headerPhase) headerPhase.innerText = "specimen v1.0.0";
 
-      playTone(660, 0.08);
+      playTone(660, 0.06);
       renderSpecimen();
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
     function openXGateScreen() {
-      hideAllScreens();
-      const xScreen = document.getElementById("screenXConnect");
-      if (xScreen) xScreen.classList.remove("hidden");
-      
+      showOnlyScreen("screenXConnect");
       const headerPhase = document.getElementById("headerPhase");
       if (headerPhase) headerPhase.innerText = "auth x";
 
@@ -743,36 +589,21 @@
       }
 
       userXHandle = sessionStorage.getItem("x_user_handle") || "@user";
-      xUserId = sessionStorage.getItem("x_user_id") || "";
-      xAccessToken = sessionStorage.getItem("x_access_token") || "";
-
       const userDisplay = document.getElementById("displayConnectedX");
-      if (userDisplay) {
-        userDisplay.innerText = userXHandle;
-      }
+      if (userDisplay) userDisplay.innerText = userXHandle;
 
-      hideAllScreens();
-      
+      showOnlyScreen("screenTasksForm");
       const topSkip = document.getElementById("topSkipBtn");
-      if (topSkip) topSkip.classList.add("hidden");
-
-      const screenTasks = document.getElementById("screenTasksForm");
-      if (screenTasks) screenTasks.classList.remove("hidden");
+      if (topSkip) topSkip.style.display = "none";
 
       const headerPhase = document.getElementById("headerPhase");
       if (headerPhase) headerPhase.innerText = "pipeline v1.0.0";
 
-      playTone(1000, 0.12);
+      playTone(1000, 0.1);
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
-    const images = [
-      "1000287031 (1).jpg",
-      "1000287233 (1).jpg",
-      "1000287234 (1).jpg",
-      "1000287235 (1).jpg"
-    ];
-
+    const images = ["1000287031 (1).jpg", "1000287233 (1).jpg", "1000287234 (1).jpg", "1000287235 (1).jpg"];
     let currentImg = 0;
     const hoods = ["OBSIDIAN GOLD", "ROBINHOOD EMERALD", "CYBER STEEL", "NEON SHADOW", "SOLAR CRIMSON"];
     const eyes = ["INFERNAL CRIMSON", "ELECTRIC AMBER", "ACID GREEN", "VOID VIOLET", "CYBER BLUE"];
@@ -789,7 +620,6 @@
     }
 
     function renderSpecimen() {
-      playTone(520, 0.04);
       const img = document.getElementById("dragonMainImg");
       if (img) img.src = images[currentImg];
 
@@ -808,29 +638,22 @@
     }
 
     let userXHandle = "";
-    let xAccessToken = "";
-    let xUserId = "";
     let task1Done = false;
     let task2Done = false;
-    let task3Done = false;
 
     function generateRandomString(length = 64) {
       const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~";
       const array = new Uint8Array(length);
       crypto.getRandomValues(array);
       let result = "";
-      for (let i = 0; i < array.length; i++) {
-        result += chars[array[i] % chars.length];
-      }
+      for (let i = 0; i < array.length; i++) result += chars[array[i] % chars.length];
       return result;
     }
 
     function base64UrlEncode(buffer) {
       let binary = "";
       const bytes = new Uint8Array(buffer);
-      for (let i = 0; i < bytes.byteLength; i++) {
-        binary += String.fromCharCode(bytes[i]);
-      }
+      for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]);
       return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
     }
 
@@ -841,7 +664,7 @@
     }
 
     async function connectXAccount() {
-      playTone(840, 0.1);
+      playTone(840, 0.08);
 
       const state = generateRandomString(32);
       const codeVerifier = generateRandomString(64);
@@ -862,13 +685,18 @@
       });
 
       document.getElementById("xAuthStatus").innerText = "Redirecting to X authorization...";
-      window.location.href = X_AUTHORIZE_URL + "?" + params.toString();
+      window.location.href = "https://twitter.com/i/oauth2/authorize?" + params.toString();
     }
 
     function doFollowTask() {
       playTone(600, 0.05);
       window.open("https://x.com/intent/follow?screen_name=DragoonHood", "_blank");
-      document.getElementById("task1Actions").innerHTML = `<button class="btn btn-check" onclick="verifyFollow()">[ CHECK ✓ ]</button>`;
+      const btn = document.getElementById("task1Btn");
+      if (btn) {
+        btn.className = "btn btn-check";
+        btn.innerText = "[ CHECK ✓ ]";
+        btn.onclick = verifyFollow;
+      }
       document.getElementById("task1Status").innerText = "Wapas aakar check par click karein.";
     }
 
@@ -876,15 +704,22 @@
       task1Done = true;
       playTone(1000, 0.1);
       document.getElementById("task1Card").classList.add("done");
-      document.getElementById("task1Actions").innerHTML = `<span style="color:#00ff66; font-size:12px; font-weight:bold;">[ VERIFIED ✓ ]</span>`;
+      const btn = document.getElementById("task1Btn");
+      if (btn) {
+        btn.outerHTML = `<span style="color:#00ff66; font-size:12px; font-weight:bold;">[ VERIFIED ✓ ]</span>`;
+      }
       document.getElementById("task1Status").innerText = "Follow verification complete.";
     }
 
     function doRtTask() {
       playTone(600, 0.05);
       window.open("https://x.com/intent/retweet?tweet_id=2100931846402171091", "_blank");
-      const actions = document.getElementById("task2Actions");
-      actions.innerHTML = `<button class="btn btn-check" onclick="verifyRt()">[ CHECK ✓ ]</button>`;
+      const btn = document.getElementById("task2Btn");
+      if (btn) {
+        btn.className = "btn btn-check";
+        btn.innerText = "[ CHECK ✓ ]";
+        btn.onclick = verifyRt;
+      }
       document.getElementById("task2Status").innerText = "RT complete karne ke baad check par click karein.";
     }
 
@@ -892,7 +727,10 @@
       task2Done = true;
       playTone(1000, 0.1);
       document.getElementById("task2Card").classList.add("done");
-      document.getElementById("task2Actions").innerHTML = `<span style="color:#00ff66; font-size:12px; font-weight:bold;">[ VERIFIED ✓ ]</span>`;
+      const btn = document.getElementById("task2Btn");
+      if (btn) {
+        btn.outerHTML = `<span style="color:#00ff66; font-size:12px; font-weight:bold;">[ VERIFIED ✓ ]</span>`;
+      }
       document.getElementById("task2Status").innerText = "Like & RT verified.";
     }
 
@@ -900,42 +738,29 @@
       playTone(600, 0.05);
       const tweetText = encodeURIComponent("I am applying for @DragoonHood Genesis Whitelist! Free Mint | 1,222 Supply on Robinhood Chain\n\n#RobinhoodChain #DragonHood #FreeMint");
       window.open(`https://x.com/intent/tweet?text=${tweetText}`, "_blank");
-      document.getElementById("tweetInputBox").classList.remove("hidden");
-      document.getElementById("task3Actions").innerHTML = `<button class="btn btn-check" onclick="verifyTweet()">[ VERIFY TWEET ]</button>`;
-      document.getElementById("task3Status").innerText = "Tweet post karein aur uska link niche paste karein.";
-    }
-
-    function verifyTweet() {
-      const url = document.getElementById("tweetUrlInput").value.trim();
-      if (!url || !url.includes("http")) {
-        alert("Please paste your posted tweet link!");
-        return;
+      document.getElementById("tweetInputBox").style.display = "block";
+      const btn = document.getElementById("task3Btn");
+      if (btn) {
+        btn.className = "btn btn-check";
+        btn.innerText = "[ VERIFY TWEET ]";
+        btn.onclick = () => {
+          const url = document.getElementById("tweetUrlInput").value.trim();
+          if (!url || !url.includes("http")) { alert("Please paste your posted tweet link!"); return; }
+          playTone(1000, 0.1);
+          document.getElementById("task3Card").classList.add("done");
+          btn.outerHTML = `<span style="color:#00ff66; font-size:12px; font-weight:bold;">[ VERIFIED ✓ ]</span>`;
+          document.getElementById("task3Status").innerText = "Tweet URL submitted.";
+        };
       }
-      task3Done = true;
-      playTone(1000, 0.1);
-      document.getElementById("task3Card").classList.add("done");
-      document.getElementById("task3Actions").innerHTML = `<span style="color:#00ff66; font-size:12px; font-weight:bold;">[ VERIFIED ✓ ]</span>`;
-      document.getElementById("task3Status").innerText = "Tweet URL submitted.";
     }
 
     function submitFinalRegistration() {
       const wallet = document.getElementById("walletAddrInput").value.trim();
       const tweetUrl = document.getElementById("tweetUrlInput").value.trim();
 
-      if (!task1Done || !task2Done) {
-        alert("Pehle Task 1 (Follow) aur Task 2 (RT) check verify karein!");
-        return;
-      }
-
-      if (!tweetUrl) {
-        alert("Please Task 3 tweet karein aur tweet ka link dalein!");
-        return;
-      }
-
-      if (!wallet || !wallet.startsWith("0x") || wallet.length !== 42) {
-        alert("Valid Robinhood Chain / EVM 0x... wallet address dalein!");
-        return;
-      }
+      if (!task1Done || !task2Done) { alert("Pehle Task 1 (Follow) aur Task 2 (RT) check verify karein!"); return; }
+      if (!tweetUrl) { alert("Please Task 3 tweet karein aur tweet ka link dalein!"); return; }
+      if (!wallet || !wallet.startsWith("0x") || wallet.length !== 42) { alert("Valid Robinhood Chain / EVM 0x... wallet address dalein!"); return; }
 
       playTone(1200, 0.2);
       const num = Math.floor(Math.random() * 1222) + 1;
@@ -949,9 +774,9 @@
       const flexText = encodeURIComponent(`Registered my Genesis Whitelist spot for @DragoonHood on Robinhood Chain!\n\nPass: ${pass}\nSupply: 1,222 (FREE MINT)\n\n#RobinhoodChain #DragonHood`);
       document.getElementById("tweetFlexBtn").href = `https://x.com/intent/tweet?text=${flexText}`;
 
-      hideAllScreens();
-      document.getElementById("screenTicket").classList.remove("hidden");
-      document.getElementById("headerPhase").innerText = "verified pass";
+      showOnlyScreen("screenTicket");
+      const headerPhase = document.getElementById("headerPhase");
+      if (headerPhase) headerPhase.innerText = "verified pass";
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
@@ -969,6 +794,5 @@
       }
     });
   </script>
-
 </body>
 </html>

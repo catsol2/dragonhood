@@ -490,7 +490,7 @@
 
       <div style="display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap;">
         <button class="btn btn-outline" style="flex: 1;" onclick="openXGateScreen()">[ ← BACK ]</button>
-        <button class="btn btn-green" style="flex: 2;" onclick="submitFinalRegistration()">[ SUBMIT WHITELIST ENTRY ]</button>
+        <button class="btn btn-green" id="submitBtn" style="flex: 2;" onclick="submitFinalRegistration()">[ SUBMIT WHITELIST ENTRY ]</button>
       </div>
     </div>
 
@@ -828,17 +828,48 @@
       }
     }
 
-    function submitFinalRegistration() {
+    async function submitFinalRegistration() {
       const wallet = document.getElementById("walletAddrInput").value.trim();
       const tweetUrl = document.getElementById("tweetUrlInput").value.trim();
 
       if (!task1Done || !task2Done) { alert("Pehle Task 1 (Follow) aur Task 2 (RT) check verify karein!"); return; }
       if (!tweetUrl) { alert("Please Task 3 tweet karein aur tweet ka link dalein!"); return; }
-      if (!wallet || !wallet.startsWith("0x") || wallet.length !== 42) { alert("Valid Robinhood Chain / EVM 0x... wallet address dalein!"); return; }
+      
+      // FIXED ALERT MESSAGE
+      if (!wallet || !wallet.startsWith("0x") || wallet.length !== 42) {
+        alert("Invalid Robinhood Chain / EVM (0x...) wallet address!");
+        return;
+      }
+
+      const submitBtn = document.getElementById("submitBtn");
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerText = "[ SAVING SUBMISSION... ]";
+      }
 
       playTone(1200, 0.2);
       const num = Math.floor(Math.random() * 1222) + 1;
       const pass = "#RH-DRAGON-" + ("0000" + num).slice(-4);
+
+      userXHandle = sessionStorage.getItem("x_user_handle") || localStorage.getItem("x_user_handle") || "@user";
+      const xId = sessionStorage.getItem("x_user_id") || "";
+
+      // SERVER STORAGE CALL
+      try {
+        await fetch("/api/submit-whitelist", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            wallet: wallet,
+            tweet_url: tweetUrl,
+            x_handle: userXHandle,
+            x_id: xId,
+            pass_id: pass
+          })
+        });
+      } catch (err) {
+        console.warn("Storage API ping:", err);
+      }
 
       document.getElementById("passId").innerText = pass;
       document.getElementById("recUser").innerText = userXHandle;

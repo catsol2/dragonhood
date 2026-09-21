@@ -3,12 +3,17 @@ from urllib.parse import urlparse, urlencode
 from urllib.request import Request, urlopen
 from urllib.error import HTTPError, URLError
 import json
+import base64
 import os
 
+# Render dynamic port support
 PORT = int(os.environ.get("PORT", 5500))
 ROOT = os.path.dirname(os.path.abspath(__file__))
 
-X_CLIENT_ID = "clFGTHhES1UzWkhsbzNOb1pKMzk6MTpjaQ"
+# Updated credentials from X Developer Console
+X_CLIENT_ID = "czRuem5WemdvdXh2SmUwbDhCMjI6MTpjaQ"
+X_CLIENT_SECRET = "oasvXGiPfMIWJE2Xzit9KsAWphfdj59rqa3t_tewZoReqmgRh4"
+
 X_TOKEN_URL = "https://api.twitter.com/2/oauth2/token"
 X_ME_URL = "https://api.twitter.com/2/users/me"
 
@@ -74,10 +79,17 @@ class Handler(SimpleHTTPRequestHandler):
                 "code_verifier": code_verifier
             })
 
+            # Basic Auth header support for Confidential Client
+            auth_str = f"{X_CLIENT_ID}:{X_CLIENT_SECRET}"
+            auth_b64 = base64.b64encode(auth_str.encode("utf-8")).decode("utf-8")
+
             request = Request(
                 X_TOKEN_URL,
                 data=form.encode("utf-8"),
-                headers={"Content-Type": "application/x-www-form-urlencoded"},
+                headers={
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Authorization": f"Basic {auth_b64}"
+                },
                 method="POST"
             )
 

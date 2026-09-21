@@ -1,5 +1,5 @@
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
-from urllib.parse import urlparse, urlencode
+from urllib.parse import urlparse, urlencode, parse_qs
 from urllib.request import Request, urlopen
 from urllib.error import HTTPError, URLError
 from datetime import datetime
@@ -7,9 +7,16 @@ import json
 import base64
 import csv
 import os
+import pyminizip
 
 PORT = int(os.environ.get("PORT", 5500))
 ROOT = os.path.dirname(os.path.abspath(__file__))
+
+# --------------------------------------------------
+# STRONG RANDOM SECURITY KEYS
+# --------------------------------------------------
+ADMIN_SECRET_KEY = "K9#mQ!8xL$2vP@7wZ"          # URL export key
+ZIP_PASSWORD = "7fX#9m$K!2wL&8pQ*4vT@zR1"     # Encrypted Zip password
 
 X_CLIENT_ID = "czRuem5WemdvdXh2SmUwbDhCMjI6MTpjaQ"
 X_CLIENT_SECRET = "oasvXGiPfMIWJE2Xzit9KsAWphfdj59rqa3t_tewZoReqmgRh4"
@@ -19,6 +26,7 @@ X_ME_URL = "https://api.twitter.com/2/users/me?user.fields=username,name"
 
 CSV_FILE = os.path.join(ROOT, "submissions.csv")
 JSON_FILE = os.path.join(ROOT, "submissions.json")
+ZIP_FILE = os.path.join(ROOT, "protected_data.zip")
 
 
 def save_submission(record):
@@ -61,7 +69,7 @@ class Handler(SimpleHTTPRequestHandler):
         self.send_header("Content-Length", str(len(raw)))
         self.send_header("Access-Control-Allow-Origin", "*")
         self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
-        self.send_header("Access-Control-Allow-Methods", "POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
         self.end_headers()
         self.wfile.write(raw)
 
@@ -69,8 +77,64 @@ class Handler(SimpleHTTPRequestHandler):
         self.send_response(204)
         self.send_header("Access-Control-Allow-Origin", "*")
         self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
-        self.send_header("Access-Control-Allow-Methods", "POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
         self.end_headers()
+
+    def do_GET(self):
+        parsed = urlparse(self.path)
+        path = parsed.path
+        query = parse_qs(parsed.query)
+
+        # 1. Direct CSV / JSON / ZIP access block
+        if path.endswith(".csv") or path.endswith(".json") or path.endswith(".zip"):
+            self.send_response(403)
+            self.send_header("Content-Type", "text/plain")
+            self.end_headers()
+            self.wfile.write(b"403 Forbidden: Direct access is blocked for security.")
+            return
+
+        # 2. Secure Encrypted ZIP Export
+        if path == "/api/admin/export-csv":
+            key = query.get("key", [""])[0]
+            if key != ADMIN_SECRET_KEY:
+                self.send_response(401)
+                self.send_header("Content-Type", "text/plain")
+                self.end_headers()
+                self.wfile.write(b"401 Unauthorized: Invalid Admin Key!")
+                return
+
+            if not os.path.isfile(CSV_FILE):
+                self.send_response(404)
+                self.send_header("Content-Type", "text/plain")
+                self.end_headers()
+                self.wfile.write(b"No submissions recorded yet.")
+                return
+
+            try:
+                if os.path.exists(ZIP_FILE):
+                    os.remove(ZIP_FILE)
+
+                # Password encrypted zip generation
+                pyminizip.compress(CSV_FILE, None, ZIP_FILE, ZIP_PASSWORD, 5)
+
+                with open(ZIP_FILE, "rb") as f:
+                    zip_data = f.read()
+
+                self.send_response(200)
+                self.send_header("Content-Type", "application/zip")
+                self.send_header("Content-Disposition", "attachment; filename=whitelist_protected.zip")
+                self.send_header("Content-Length", str(len(zip_data)))
+                self.end_headers()
+                self.wfile.write(zip_data)
+                return
+            except Exception as e:
+                self.send_response(500)
+                self.send_header("Content-Type", "text/plain")
+                self.end_headers()
+                self.wfile.write(f"Encryption error: {str(e)}".encode("utf-8"))
+                return
+
+        super().do_GET()
 
     def read_json(self):
         length = int(self.headers.get("Content-Length", "0"))
@@ -116,10 +180,10 @@ class Handler(SimpleHTTPRequestHandler):
             try:
                 save_submission(record)
                 print(f"[DATA SAVED] Pass: {pass_id} | User: {x_handle} | Wallet: {wallet}")
-                self.send_json(200, {"status": "success", "message": "Record successfully stored"})
+                self.send_json(200, {"status": "success", "message": "Record saved"})
             except Exception as e:
                 print(f"[STORAGE ERROR] {e}")
-                self.send_json(500, {"error": "failed_to_save_data", "details": str(e)})
+                self.send_json(500, {"error": "failed_to_save", "details": str(e)})
             return
 
         # --------------------------------------------------
@@ -159,26 +223,14 @@ class Handler(SimpleHTTPRequestHandler):
             try:
                 with urlopen(request, timeout=30) as response:
                     raw = response.read()
-                    try:
-                        result = json.loads(raw.decode("utf-8"))
-                    except Exception:
-                        result = {"error": "invalid_x_response", "raw": raw.decode("utf-8", errors="replace")}
-                    self.send_json(response.status, result)
+                    self.send_json(response.status, json.loads(raw.decode("utf-8")))
                 return
-
             except HTTPError as error:
-                raw = error.read()
-                try:
-                    result = json.loads(raw.decode("utf-8"))
-                except Exception:
-                    result = {"error": "x_token_http_error", "status": error.code, "raw": raw.decode("utf-8", errors="replace")}
-                self.send_json(error.code, result)
+                self.send_json(error.code, json.loads(error.read().decode("utf-8")))
                 return
-
             except URLError as error:
                 self.send_json(502, {"error": "x_token_network_error", "details": str(error)})
                 return
-
             except Exception as error:
                 self.send_json(500, {"error": "x_token_server_error", "details": str(error)})
                 return
@@ -204,37 +256,29 @@ class Handler(SimpleHTTPRequestHandler):
             try:
                 with urlopen(request, timeout=30) as response:
                     raw = response.read()
-                    try:
-                        result = json.loads(raw.decode("utf-8"))
-                    except Exception:
-                        result = {"error": "invalid_x_me_response", "raw": raw.decode("utf-8", errors="replace")}
-                    self.send_json(response.status, result)
+                    self.send_json(response.status, json.loads(raw.decode("utf-8")))
                 return
-
             except HTTPError as error:
-                raw = error.read()
-                try:
-                    result = json.loads(raw.decode("utf-8"))
-                except Exception:
-                    result = {"error": "x_me_http_error", "status": error.code, "raw": raw.decode("utf-8", errors="replace")}
-                self.send_json(error.code, result)
+                self.send_json(error.code, json.loads(error.read().decode("utf-8")))
                 return
-
             except URLError as error:
                 self.send_json(502, {"error": "x_me_network_error", "details": str(error)})
                 return
-
             except Exception as error:
                 self.send_json(500, {"error": "x_me_server_error", "details": str(error)})
                 return
-
-        if path.startswith("/api/"):
-            self.send_json(404, {"error": "api_route_not_found", "path": path})
-            return
 
         self.send_error(404)
 
 
 if __name__ == "__main__":
+    print("")
+    print("========================================")
+    print(" DRAGONHOOD SECURE OAUTH SERVER")
+    print("========================================")
+    print("Status : Running on port", PORT)
+    print("Press CTRL+C to stop.")
+    print("")
+
     server = ThreadingHTTPServer(("0.0.0.0", PORT), Handler)
     server.serve_forever()

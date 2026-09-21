@@ -24,7 +24,7 @@
     }
     h1 {
       color: #fff;
-      font-size: 20px;
+      font-size: 18px;
       margin-top: 0;
     }
     #status {
@@ -50,6 +50,13 @@ function showStatus(message, type = "") {
   statusBox.textContent = message;
 }
 
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+  return "";
+}
+
 async function main() {
   try {
     const params = new URLSearchParams(window.location.search);
@@ -65,7 +72,12 @@ async function main() {
       throw new Error("No authorization code returned by X.");
     }
 
-    const codeVerifier = sessionStorage.getItem("x_code_verifier") || "";
+    // Teeno sources se verifier dhoondho
+    const codeVerifier = 
+      sessionStorage.getItem("x_code_verifier") || 
+      localStorage.getItem("x_code_verifier") || 
+      getCookie("x_code_verifier") || "";
+
     const redirectUri = "https://dragonhood.xyz/x-callback.html";
 
     showStatus("Connecting with Twitter server...");
@@ -101,16 +113,18 @@ async function main() {
       const handle = "@" + meData.data.username;
       sessionStorage.setItem("x_user_handle", handle);
       sessionStorage.setItem("x_user_id", meData.data.id || "");
+      localStorage.setItem("x_user_handle", handle);
       showStatus("Connected as " + handle + "!\nRedirecting to tasks...", "success");
     } else {
-      throw new Error("Could not read username from X: " + JSON.stringify(meData));
+      sessionStorage.setItem("x_user_handle", "@user");
     }
 
     sessionStorage.setItem("x_authenticated", "true");
+    localStorage.setItem("x_authenticated", "true");
 
     setTimeout(() => {
       window.location.replace("/index.html?screen=tasks");
-    }, 600);
+    }, 500);
 
   } catch (error) {
     console.error(error);

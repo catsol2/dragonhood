@@ -2,8 +2,10 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlparse, urlencode
 from urllib.request import Request, urlopen
 from urllib.error import HTTPError, URLError
+from datetime import datetime
 import json
 import base64
+import csv
 import os
 
 PORT = int(os.environ.get("PORT", 5500))
@@ -14,6 +16,37 @@ X_CLIENT_SECRET = "oasvXGiPfMIWJE2Xzit9KsAWphfdj59rqa3t_tewZoReqmgRh4"
 
 X_TOKEN_URL = "https://api.twitter.com/2/oauth2/token"
 X_ME_URL = "https://api.twitter.com/2/users/me?user.fields=username,name"
+
+CSV_FILE = os.path.join(ROOT, "submissions.csv")
+JSON_FILE = os.path.join(ROOT, "submissions.json")
+
+
+def save_submission(record):
+    file_exists = os.path.isfile(CSV_FILE)
+    with open(CSV_FILE, mode="a", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        if not file_exists:
+            writer.writerow(["Timestamp", "Pass_ID", "X_Username", "X_User_ID", "Wallet_Address", "Tweet_Link"])
+        writer.writerow([
+            record.get("timestamp"),
+            record.get("pass_id"),
+            record.get("x_username"),
+            record.get("x_user_id"),
+            record.get("wallet_address"),
+            record.get("tweet_link")
+        ])
+
+    all_records = []
+    if os.path.isfile(JSON_FILE):
+        try:
+            with open(JSON_FILE, "r", encoding="utf-8") as jf:
+                all_records = json.load(jf)
+        except Exception:
+            all_records = []
+
+    all_records.append(record)
+    with open(JSON_FILE, "w", encoding="utf-8") as jf:
+        json.dump(all_records, jf, indent=2)
 
 
 class Handler(SimpleHTTPRequestHandler):
@@ -55,6 +88,38 @@ class Handler(SimpleHTTPRequestHandler):
 
         if data is None:
             self.send_json(400, {"error": "invalid_json"})
+            return
+
+        # --------------------------------------------------
+        # WHITELIST SUBMISSION STORAGE
+        # --------------------------------------------------
+        if path == "/api/submit-whitelist":
+            wallet = data.get("wallet", "").strip()
+            tweet_url = data.get("tweet_url", "").strip()
+            x_handle = data.get("x_handle", "").strip()
+            x_id = data.get("x_id", "").strip()
+            pass_id = data.get("pass_id", "").strip()
+
+            if not wallet or not tweet_url:
+                self.send_json(400, {"error": "missing_fields"})
+                return
+
+            record = {
+                "timestamp": datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC"),
+                "pass_id": pass_id,
+                "x_username": x_handle,
+                "x_user_id": x_id,
+                "wallet_address": wallet,
+                "tweet_link": tweet_url
+            }
+
+            try:
+                save_submission(record)
+                print(f"[DATA SAVED] Pass: {pass_id} | User: {x_handle} | Wallet: {wallet}")
+                self.send_json(200, {"status": "success", "message": "Record successfully stored"})
+            except Exception as e:
+                print(f"[STORAGE ERROR] {e}")
+                self.send_json(500, {"error": "failed_to_save_data", "details": str(e)})
             return
 
         # --------------------------------------------------

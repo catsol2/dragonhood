@@ -25,7 +25,6 @@
       overflow-x: hidden;
     }
 
-    /* Scanlines completely removed for crystal clean text */
     .crt-overlay {
       display: none !important;
     }
@@ -48,21 +47,36 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 12px 20px;
+      padding: 10px 14px;
       border-bottom: 1px solid rgba(0, 255, 102, 0.3);
       background: rgba(5, 5, 5, 0.95);
-      font-size: 13px;
+      font-size: 11px;
+      gap: 6px;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      flex-wrap: nowrap;
+      gap: 6px;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
     .badge-rh {
       border: 1px solid #ffb800;
       color: #ffb800;
       background: rgba(255, 184, 0, 0.1);
-      padding: 2px 8px;
+      padding: 2px 6px;
       border-radius: 3px;
-      font-size: 11px;
-      margin-left: 8px;
+      font-size: 10px;
       font-weight: bold;
+      white-space: nowrap;
+      display: inline-block;
     }
 
     main {
@@ -72,7 +86,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 16px;
+      padding: 12px;
       width: 100%;
     }
 
@@ -83,30 +97,31 @@
       border: 1px solid rgba(0, 255, 102, 0.4);
       box-shadow: 0 0 30px rgba(0, 255, 102, 0.12);
       border-radius: 6px;
-      padding: 24px;
+      padding: 18px;
       margin: auto;
     }
 
     .log-line {
       margin-bottom: 7px;
       color: #00ff66;
-      font-size: 13px;
+      font-size: 12px;
       line-height: 1.4;
       word-break: break-word;
     }
 
     .btn {
-      padding: 10px 16px;
+      padding: 8px 12px;
       font-weight: bold;
       cursor: pointer;
       border-radius: 4px;
-      font-size: 12px;
+      font-size: 11px;
       text-transform: uppercase;
       display: inline-block;
       text-align: center;
       border: none;
       transition: 0.2s all;
       user-select: none;
+      white-space: nowrap;
     }
 
     .btn-green { background: #00ff66; color: #000; }
@@ -117,19 +132,42 @@
     .btn-amber:hover { background: #ffd04d; box-shadow: 0 0 12px rgba(255, 184, 0, 0.4); }
     .btn-check { background: #00ff66; color: #000; padding: 6px 14px; font-size: 11px; }
 
+    .specimen-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(0,255,102,0.3);
+      padding-bottom: 10px;
+      gap: 8px;
+    }
+
+    .badge-mint {
+      border: 1px solid #ffb800;
+      color: #ffb800;
+      background: rgba(255, 184, 0, 0.1);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: bold;
+      white-space: nowrap;
+      text-align: center;
+      line-height: 1.3;
+    }
+
     .specimen-grid {
       display: flex;
-      gap: 20px;
+      gap: 16px;
       flex-wrap: wrap;
-      margin-top: 15px;
+      margin-top: 14px;
     }
 
     .specimen-col-left { flex: 1; min-width: 220px; text-align: center; }
-    .specimen-col-right { flex: 1.2; min-width: 250px; display: flex; flex-direction: column; justify-content: space-between; }
+    .specimen-col-right { flex: 1.2; min-width: 240px; display: flex; flex-direction: column; justify-content: space-between; }
 
     .dragon-preview-img {
-      width: 220px;
-      height: 220px;
+      width: 100%;
+      max-width: 240px;
+      height: 240px;
       object-fit: cover;
       border: 1px solid rgba(0, 255, 102, 0.4);
       border-radius: 4px;
@@ -142,18 +180,18 @@
       margin-top: 10px;
       border: 1px solid #ffb800;
       background: rgba(0, 0, 0, 0.85);
-      padding: 6px;
+      padding: 6px 8px;
       border-radius: 4px;
     }
     .billboard small { color: #ffb800; display: block; font-size: 9px; }
-    .billboard span { color: #fff; font-size: 12px; font-weight: bold; }
+    .billboard span { color: #fff; font-size: 11px; font-weight: bold; }
 
     .trait-row {
       display: flex;
       justify-content: space-between;
       border-bottom: 1px solid rgba(0, 255, 102, 0.15);
       padding: 6px 0;
-      font-size: 12px;
+      font-size: 11px;
     }
     .trait-label { color: rgba(0, 255, 102, 0.7); }
     .trait-val { color: #fff; font-weight: bold; }
@@ -195,7 +233,7 @@
       border: 1px solid rgba(0, 255, 102, 0.4);
       color: #00ff66;
       padding: 9px;
-      font-size: 13px;
+      font-size: 12px;
       border-radius: 4px;
       margin-top: 4px;
     }
@@ -203,8 +241,8 @@
     .ticket-card {
       background: #000;
       border: 2px dashed rgba(0, 255, 102, 0.5);
-      padding: 15px;
-      margin: 15px 0;
+      padding: 14px;
+      margin: 14px 0;
       text-align: left;
     }
 
@@ -213,7 +251,7 @@
       border: 1px solid #ffb800;
       border-radius: 4px;
       padding: 10px;
-      margin-top: 15px;
+      margin-top: 14px;
       text-align: left;
       font-size: 11px;
     }
@@ -223,24 +261,59 @@
       z-index: 30;
       display: flex;
       justify-content: space-between;
-      padding: 10px 20px;
+      padding: 10px 14px;
       border-top: 1px solid rgba(0, 255, 102, 0.2);
       background: rgba(5, 5, 5, 0.95);
-      font-size: 11px;
+      font-size: 10px;
       color: rgba(0, 255, 102, 0.6);
       flex-wrap: wrap;
       gap: 6px;
     }
 
-    @media (max-width: 650px) {
-      header { flex-direction: column; align-items: flex-start; gap: 8px; }
-      header > div:last-child { width: 100%; display: flex; justify-content: space-between; }
-      .term-box { padding: 14px; }
-      .specimen-grid { flex-direction: column; }
-      .task-card { flex-direction: column; align-items: flex-start; }
-      .task-card > div:last-child { width: 100%; margin-top: 8px; }
-      .task-card .btn { width: 100%; }
-      footer { flex-direction: column; text-align: center; }
+    @media (max-width: 580px) {
+      header {
+        padding: 8px 10px;
+        font-size: 10px;
+      }
+      .badge-rh {
+        font-size: 9px;
+        padding: 2px 4px;
+      }
+      .btn {
+        padding: 6px 10px;
+        font-size: 10px;
+      }
+      .term-box {
+        padding: 12px;
+      }
+      .specimen-header h2 {
+        font-size: 13px !important;
+      }
+      .specimen-header small {
+        font-size: 9px !important;
+      }
+      .badge-mint {
+        font-size: 9px;
+        padding: 3px 6px;
+      }
+      .specimen-grid {
+        flex-direction: column;
+      }
+      .task-card {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .task-card > div:last-child {
+        width: 100%;
+        margin-top: 6px;
+      }
+      .task-card .btn {
+        width: 100%;
+      }
+      footer {
+        flex-direction: column;
+        text-align: center;
+      }
     }
   </style>
 </head>
@@ -254,18 +327,18 @@
   </video>
 
   <header>
-    <div>
+    <div class="header-left">
       <strong>dragonhood ~ <span id="headerPhase">boot v1.0.0</span></strong>
       <span class="badge-rh">ROBINHOOD CHAIN</span>
     </div>
 
-    <div>
-      <button class="btn btn-outline" style="padding: 4px 10px; font-size: 10px;" onclick="toggleAudio(event)">
+    <div class="header-right">
+      <button class="btn btn-outline" style="padding: 4px 8px; font-size: 9px;" onclick="toggleAudio(event)">
         [ SOUND: <span id="soundLabel">ON</span> ]
       </button>
 
-      <button class="btn btn-amber" id="topSkipBtn" onclick="goToSpecimenScreen()">
-        [ TAP TO SKIP ]
+      <button class="btn btn-amber" id="topSkipBtn" style="padding: 4px 8px; font-size: 9px;" onclick="goToSpecimenScreen()">
+        [ SKIP ]
       </button>
     </div>
   </header>
@@ -275,15 +348,15 @@
     <!-- SCREEN 1: BOOT -->
     <div id="screenBoot" class="term-box" style="display: block;">
       <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(0,255,102,0.2); padding-bottom: 8px;">
-        <strong style="color:#fff;">DRAGON HOOD OS — draconic kernel</strong>
-        <span style="color:#ffb800; font-size: 11px;">1,222 FREE MINTS</span>
+        <strong style="color:#fff; font-size: 11px;">DRAGON HOOD OS — draconic kernel</strong>
+        <span style="color:#ffb800; font-size: 10px; font-weight: bold; white-space: nowrap;">1,222 FREE MINTS</span>
       </div>
 
-      <div id="bootLogs" style="min-height: 180px; padding: 14px 0;"></div>
+      <div id="bootLogs" style="min-height: 160px; padding: 12px 0;"></div>
 
       <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(0,255,102,0.2); padding-top: 10px; gap: 8px; flex-wrap: wrap;">
-        <span>drac@robinhood:~$ _</span>
-        <button class="btn btn-amber" style="flex-grow: 1; max-width: 250px;" onclick="goToSpecimenScreen()">
+        <span style="font-size: 11px;">drac@robinhood:~$ _</span>
+        <button class="btn btn-amber" style="flex-grow: 1; max-width: 240px;" onclick="goToSpecimenScreen()">
           [ PROCEED TO SPECIMEN → ]
         </button>
       </div>
@@ -291,13 +364,13 @@
 
     <!-- SCREEN 2: SPECIMEN -->
     <div id="screenSpecimen" class="term-box" style="display: none;">
-      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0,255,102,0.3); padding-bottom: 10px;">
+      <div class="specimen-header">
         <div>
-          <small style="color: rgba(0,255,102,0.7); display:block;">> leaking hood specimens…</small>
-          <h2 style="color:#fff;">SPECIMEN <span id="specimenNo">0333</span> / 1222</h2>
+          <small style="color: rgba(0,255,102,0.7); display:block; font-size: 10px;">> leaking hood specimens…</small>
+          <h2 style="color:#fff; font-size: 15px; margin-top: 2px;">SPECIMEN <span id="specimenNo">0333</span> / 1222</h2>
         </div>
         <div>
-          <span class="badge-rh" style="font-size: 12px; padding: 5px 10px;">FREE MINT (0.00 RH)</span>
+          <span class="badge-mint">FREE MINT (0.00 RH)</span>
         </div>
       </div>
 
@@ -319,7 +392,7 @@
           </div>
 
           <div>
-            <small style="display:block; color:rgba(0,255,102,0.6); margin-top:8px;">SPECIMEN SELECTION:</small>
+            <small style="display:block; color:rgba(0,255,102,0.6); margin-top:8px; font-size: 10px;">SPECIMEN SELECTION:</small>
             <div class="thumbs-row">
               <img src="1000287031 (1).jpg" onclick="switchSpecimen(0)" class="thumb" alt="1">
               <img src="1000287233 (1).jpg" onclick="switchSpecimen(1)" class="thumb" alt="2">
@@ -328,7 +401,7 @@
             </div>
           </div>
 
-          <div style="display:flex; gap:10px; margin-top:10px;">
+          <div style="display:flex; gap:8px; margin-top:10px;">
             <button class="btn btn-outline" style="flex:1;" onclick="nextSpecimen()">[ REROLL ]</button>
             <button class="btn btn-green" style="flex:1.4;" onclick="openXGateScreen()">[ APPLY WHITELIST → ]</button>
           </div>
@@ -338,34 +411,34 @@
 
     <!-- SCREEN 3: X CONNECT -->
     <div id="screenXConnect" class="term-box" style="display: none; text-align: center;">
-      <div style="border-bottom: 1px solid rgba(0,255,102,0.2); padding-bottom: 10px; margin-bottom: 20px;">
-        <span style="color:#ffb800; font-size:11px; font-weight:bold;">> X IDENTITY AUTHENTICATION</span>
-        <h2 style="color:#fff; margin-top:4px;">CONNECT X (TWITTER) PROFILE</h2>
-        <small style="color: rgba(0,255,102,0.6); display: block; margin-top: 4px;">Authorize your X account to enter the Robinhood Chain Whitelist Tasks.</small>
+      <div style="border-bottom: 1px solid rgba(0,255,102,0.2); padding-bottom: 10px; margin-bottom: 16px;">
+        <span style="color:#ffb800; font-size:10px; font-weight:bold;">> X IDENTITY AUTHENTICATION</span>
+        <h2 style="color:#fff; margin-top:4px; font-size: 15px;">CONNECT X (TWITTER) PROFILE</h2>
+        <small style="color: rgba(0,255,102,0.6); display: block; margin-top: 4px; font-size: 10px;">Authorize your X account to enter Robinhood Chain Whitelist.</small>
       </div>
 
       <div style="max-width: 440px; margin: 0 auto; text-align: center;">
-        <div id="xAuthStatus" style="color:#ffb800; font-size:12px; margin-bottom:15px;">X account authorization required.</div>
-        <button class="btn btn-green" style="width: 100%; padding: 12px; font-size: 13px;" onclick="connectXAccount()">
+        <div id="xAuthStatus" style="color:#ffb800; font-size:11px; margin-bottom:14px;">X account authorization required.</div>
+        <button class="btn btn-green" style="width: 100%; padding: 12px; font-size: 11px;" onclick="connectXAccount()">
           [ 𝕏 CONNECT & AUTHORIZE WITH X ]
         </button>
       </div>
 
-      <div style="margin-top: 20px;">
-        <button class="btn btn-outline" style="width: 100%; max-width: 250px;" onclick="goToSpecimenScreen()">[ ← BACK TO SPECIMENS ]</button>
+      <div style="margin-top: 16px;">
+        <button class="btn btn-outline" style="width: 100%; max-width: 220px;" onclick="goToSpecimenScreen()">[ ← BACK TO SPECIMENS ]</button>
       </div>
     </div>
 
     <!-- SCREEN 4: TASKS -->
     <div id="screenTasksForm" class="term-box" style="display: none;">
-      <div style="border-bottom: 1px solid rgba(0,255,102,0.3); padding-bottom: 10px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 8px;">
+      <div style="border-bottom: 1px solid rgba(0,255,102,0.3); padding-bottom: 8px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 6px;">
         <div>
-          <span style="color:#ffb800; font-size:11px; font-weight:bold;">> WHITELIST TASK PIPELINE</span>
-          <h2 style="color:#fff; margin-top:2px;">ROBINHOOD CHAIN PROTOCOL</h2>
+          <span style="color:#ffb800; font-size:9px; font-weight:bold;">> WHITELIST TASK PIPELINE</span>
+          <h2 style="color:#fff; margin-top:2px; font-size: 14px;">ROBINHOOD CHAIN PROTOCOL</h2>
         </div>
         <div style="text-align: right;">
-          <small style="color: rgba(0,255,102,0.6);">CONNECTED AS:</small>
-          <div id="displayConnectedX" style="color: #ffb800; font-weight: bold; font-size: 13px;">@user</div>
+          <small style="color: rgba(0,255,102,0.6); font-size: 9px;">CONNECTED AS:</small>
+          <div id="displayConnectedX" style="color: #ffb800; font-weight: bold; font-size: 12px;">@user</div>
         </div>
       </div>
 
@@ -401,7 +474,7 @@
         </div>
 
         <div id="tweetInputBox" style="margin-top: 10px; display: none;">
-          <label style="font-size: 11px; color: #ffb800;">PASTE YOUR SUBMITTED TWEET LINK:</label>
+          <label style="font-size: 10px; color: #ffb800;">PASTE YOUR SUBMITTED TWEET LINK:</label>
           <input type="url" id="tweetUrlInput" placeholder="https://x.com/username/status/..." class="form-control">
         </div>
       </div>
@@ -409,13 +482,13 @@
       <div class="task-card" style="display: block;">
         <div style="display: flex; justify-content: space-between;">
           <div class="task-title">4. ROBINHOOD CHAIN / EVM WALLET ADDRESS</div>
-          <span style="color:#ffb800; font-size:10px;">FREE MINT TICKET</span>
+          <span style="color:#ffb800; font-size:10px; white-space: nowrap;">FREE MINT TICKET</span>
         </div>
         <input type="text" id="walletAddrInput" required pattern="^0x[a-fA-F0-9]{40}$" placeholder="0x..." class="form-control" style="margin-top: 8px;">
-        <small style="color: rgba(0,255,102,0.5); font-size: 10px; display: block; margin-top: 4px;">Direct address entry. Aapka free mint pass is address se bind hoga.</small>
+        <small style="color: rgba(0,255,102,0.5); font-size: 9px; display: block; margin-top: 4px;">Direct address entry. Aapka free mint pass is address se bind hoga.</small>
       </div>
 
-      <div style="display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap;">
+      <div style="display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap;">
         <button class="btn btn-outline" style="flex: 1;" onclick="openXGateScreen()">[ ← BACK ]</button>
         <button class="btn btn-green" style="flex: 2;" onclick="submitFinalRegistration()">[ SUBMIT WHITELIST ENTRY ]</button>
       </div>
@@ -423,16 +496,16 @@
 
     <!-- SCREEN 5: TICKET -->
     <div id="screenTicket" class="term-box" style="display: none; text-align: center;">
-      <h2 style="color:#fff; margin-bottom: 4px;">WHITELIST APPLICATION GRANTED</h2>
-      <p style="font-size: 12px; color: rgba(0,255,102,0.7);">Your details are cryptographically queued for Robinhood Chain Lair.</p>
+      <h2 style="color:#fff; margin-bottom: 4px; font-size: 15px;">WHITELIST APPLICATION GRANTED</h2>
+      <p style="font-size: 11px; color: rgba(0,255,102,0.7);">Your details are cryptographically queued for Robinhood Chain Lair.</p>
 
       <div class="ticket-card">
         <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(0,255,102,0.2); padding-bottom:6px; margin-bottom:10px;">
-          <span style="color:#ffb800; font-weight:bold;">GENESIS PASS // TIER 1</span>
-          <span id="passId" style="color:#fff; font-weight:bold;">#RH-DRAGON-0421</span>
+          <span style="color:#ffb800; font-weight:bold; font-size: 11px;">GENESIS PASS // TIER 1</span>
+          <span id="passId" style="color:#fff; font-weight:bold; font-size: 11px;">#RH-DRAGON-0421</span>
         </div>
 
-        <div style="font-size:12px; line-height: 1.8;">
+        <div style="font-size: 11px; line-height: 1.8;">
           <div>CHAIN: <strong style="color:#fff;">Robinhood Chain</strong></div>
           <div>MAX SUPPLY: <strong style="color:#fff;">1,222</strong></div>
           <div>MINT COST: <strong style="color:#00ff66;">0.00 RH (FREE MINT)</strong></div>
@@ -449,8 +522,8 @@
         <div style="word-break: break-all;">WALLET ADDRESS: <strong id="recWallet" style="color:#fff;">-</strong></div>
       </div>
 
-      <div style="display:flex; gap:10px; margin-top: 15px; flex-wrap: wrap;">
-        <a id="tweetFlexBtn" target="_blank" class="btn" style="background:#1d9bf0; color:#fff; flex:1; text-decoration:none;">FLEX ON X (TWITTER)</a>
+      <div style="display:flex; gap:8px; margin-top: 14px; flex-wrap: wrap;">
+        <a id="tweetFlexBtn" target="_blank" class="btn" style="background:#1d9bf0; color:#fff; flex:1; text-decoration:none;">FLEX ON X</a>
         <button class="btn btn-outline" style="flex:1;" onclick="goToSpecimenScreen()">[ VIEW SPECIMENS ]</button>
       </div>
     </div>
@@ -463,7 +536,6 @@
   </footer>
 
   <script>
-    // New Updated Client ID from Console
     const X_CLIENT_ID = "czRuem5WemdvdXh2SmUwbDhCMjI6MTpjaQ";
     const X_REDIRECT_URI = "https://dragonhood.xyz/x-callback.html";
 
@@ -737,7 +809,7 @@
     function doTweetTask() {
       playTone(600, 0.05);
       const tweetText = encodeURIComponent("I am applying for @DragoonHood Genesis Whitelist! Free Mint | 1,222 Supply on Robinhood Chain\n\n#RobinhoodChain #DragonHood #FreeMint");
-      window.open(`https://x.com/intent/tweet?text=${tweetText}`, "_blank");
+      window.open(`https://tweet.com/intent/tweet?text=${tweetText}`, "_blank");
       document.getElementById("tweetInputBox").style.display = "block";
       const btn = document.getElementById("task3Btn");
       if (btn) {

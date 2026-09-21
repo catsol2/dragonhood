@@ -6,16 +6,14 @@ import json
 import base64
 import os
 
-# Render dynamic port support
 PORT = int(os.environ.get("PORT", 5500))
 ROOT = os.path.dirname(os.path.abspath(__file__))
 
-# Updated credentials from X Developer Console
 X_CLIENT_ID = "czRuem5WemdvdXh2SmUwbDhCMjI6MTpjaQ"
 X_CLIENT_SECRET = "oasvXGiPfMIWJE2Xzit9KsAWphfdj59rqa3t_tewZoReqmgRh4"
 
 X_TOKEN_URL = "https://api.twitter.com/2/oauth2/token"
-X_ME_URL = "https://api.twitter.com/2/users/me"
+X_ME_URL = "https://api.twitter.com/2/users/me?user.fields=username,name"
 
 
 class Handler(SimpleHTTPRequestHandler):
@@ -71,15 +69,15 @@ class Handler(SimpleHTTPRequestHandler):
                 self.send_json(400, {"error": "missing_required_parameters"})
                 return
 
-            form = urlencode({
+            form_payload = {
                 "code": code,
                 "grant_type": "authorization_code",
                 "client_id": X_CLIENT_ID,
                 "redirect_uri": redirect_uri,
                 "code_verifier": code_verifier
-            })
+            }
+            form = urlencode(form_payload)
 
-            # Basic Auth header support for Confidential Client
             auth_str = f"{X_CLIENT_ID}:{X_CLIENT_SECRET}"
             auth_b64 = base64.b64encode(auth_str.encode("utf-8")).decode("utf-8")
 
@@ -131,7 +129,10 @@ class Handler(SimpleHTTPRequestHandler):
 
             request = Request(
                 X_ME_URL,
-                headers={"Authorization": "Bearer " + access_token},
+                headers={
+                    "Authorization": f"Bearer {access_token}",
+                    "User-Agent": "DragonHoodApp"
+                },
                 method="GET"
             )
 

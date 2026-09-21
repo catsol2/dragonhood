@@ -80,41 +80,41 @@ async function main() {
       })
     });
 
-    const tokenData = await tokenResponse.json().catch(() => ({}));
+    const tokenData = await tokenResponse.json();
 
-    if (tokenResponse.ok && tokenData.access_token) {
-      sessionStorage.setItem("x_access_token", tokenData.access_token);
+    if (!tokenResponse.ok || !tokenData.access_token) {
+      throw new Error("Failed to get access token from X: " + JSON.stringify(tokenData));
+    }
 
-      const meResponse = await fetch("/api/x-me", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ access_token: tokenData.access_token })
-      });
-      const meData = await meResponse.json().catch(() => ({}));
+    sessionStorage.setItem("x_access_token", tokenData.access_token);
+    showStatus("Retrieving your X username...");
 
-      if (meData.data && meData.data.username) {
-        sessionStorage.setItem("x_user_handle", "@" + meData.data.username);
-        sessionStorage.setItem("x_user_id", meData.data.id || "");
-      }
+    const meResponse = await fetch("/api/x-me", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ access_token: tokenData.access_token })
+    });
+
+    const meData = await meResponse.json();
+
+    if (meResponse.ok && meData.data && meData.data.username) {
+      const handle = "@" + meData.data.username;
+      sessionStorage.setItem("x_user_handle", handle);
+      sessionStorage.setItem("x_user_id", meData.data.id || "");
+      showStatus("Connected as " + handle + "!\nRedirecting to tasks...", "success");
     } else {
-      // Fallback username agar API me late response ho
-      sessionStorage.setItem("x_user_handle", "@user");
+      throw new Error("Could not read username from X: " + JSON.stringify(meData));
     }
 
     sessionStorage.setItem("x_authenticated", "true");
 
-    showStatus("Authorization successful! Loading tasks...", "success");
-
     setTimeout(() => {
       window.location.replace("/index.html?screen=tasks");
-    }, 400);
+    }, 600);
 
   } catch (error) {
-    showStatus("X Authorization: " + (error.message || String(error)), "error");
-    setTimeout(() => {
-      sessionStorage.setItem("x_authenticated", "true");
-      window.location.replace("/index.html?screen=tasks");
-    }, 1200);
+    console.error(error);
+    showStatus("X Authorization Error:\n" + (error.message || String(error)), "error");
   }
 }
 

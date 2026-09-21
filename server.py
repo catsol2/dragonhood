@@ -7,17 +7,15 @@ import json
 import base64
 import csv
 import os
-import hashlib
-import hmac
 
 PORT = int(os.environ.get("PORT", 5500))
 ROOT = os.path.dirname(os.path.abspath(__file__))
 
 # --------------------------------------------------
-# SECURITY KEYS
+# SECURITY KEYS (URL-Safe Key & Strong Master Password)
 # --------------------------------------------------
-ADMIN_SECRET_KEY = "K9#mQ!8xL$2vP@7wZ"          # URL export key
-DATA_ENCRYPTION_PASS = "7fX#9m$K!2wL&8pQ*4vT@zR1" # Password to decrypt/unlock
+ADMIN_SECRET_KEY = "K9_mQ_8xL_2vP_7wZ"          # URL export key (No '#' symbol)
+DATA_ENCRYPTION_PASS = "7fX#9m$K!2wL&8pQ*4vT@zR1" # Vault Master Password
 
 X_CLIENT_ID = "czRuem5WemdvdXh2SmUwbDhCMjI6MTpjaQ"
 X_CLIENT_SECRET = "oasvXGiPfMIWJE2Xzit9KsAWphfdj59rqa3t_tewZoReqmgRh4"
@@ -27,22 +25,6 @@ X_ME_URL = "https://api.twitter.com/2/users/me?user.fields=username,name"
 
 CSV_FILE = os.path.join(ROOT, "submissions.csv")
 JSON_FILE = os.path.join(ROOT, "submissions.json")
-
-
-# Built-in XOR + Key Derivation Stream Cipher (Zero external packages needed)
-def encrypt_data(raw_bytes, password):
-    # Derive key via PBKDF2 HMAC SHA-256
-    salt = os.urandom(16)
-    key = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000, dklen=32)
-    
-    # Encrypt
-    encrypted = bytearray()
-    for idx, byte in enumerate(raw_bytes):
-        key_byte = key[idx % len(key)]
-        encrypted.append(byte ^ key_byte)
-        
-    mac = hmac.new(key, encrypted, hashlib.sha256).digest()
-    return salt + mac + bytes(encrypted)
 
 
 def save_submission(record):
@@ -101,7 +83,7 @@ class Handler(SimpleHTTPRequestHandler):
         path = parsed.path
         query = parse_qs(parsed.query)
 
-        # 1. Direct CSV / JSON file access blocked for everyone
+        # 1. Direct CSV / JSON file download block
         if path.endswith(".csv") or path.endswith(".json"):
             self.send_response(403)
             self.send_header("Content-Type", "text/plain")
@@ -109,7 +91,7 @@ class Handler(SimpleHTTPRequestHandler):
             self.wfile.write(b"403 Forbidden: Direct file access is blocked.")
             return
 
-        # 2. Secure Admin Web Viewer & Decrypt Tool
+        # 2. Secure Admin Vault Viewer
         if path == "/api/admin/viewer":
             key = query.get("key", [""])[0]
             if key != ADMIN_SECRET_KEY:
@@ -119,62 +101,80 @@ class Handler(SimpleHTTPRequestHandler):
                 self.wfile.write(b"401 Unauthorized: Invalid Admin Key!")
                 return
 
-            # Built-in secure HTML viewer jisme password dalne par hi table khulega
-            html_ui = """
-            <!DOCTYPE html>
-            <html>
-            <head>
-              <title>DragonHood Admin Vault</title>
-              <style>
-                body { background: #0b0f0c; color: #00ff66; font-family: monospace; padding: 25px; }
-                h2 { color: #ffb800; }
-                input { background: #000; border: 1px solid #00ff66; color: #00ff66; padding: 8px 12px; font-family: monospace; width: 320px; }
-                button { background: #00ff66; color: #000; font-weight: bold; border: none; padding: 8px 16px; cursor: pointer; }
-                table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 12px; }
-                th, td { border: 1px solid rgba(0,255,102,0.3); padding: 8px; text-align: left; }
-                th { background: rgba(0,255,102,0.1); color: #fff; }
-                #err { color: #ff5555; margin-top: 10px; }
-              </style>
-            </head>
-            <body>
-              <h2># DRAGONHOOD SECURE VAULT</h2>
-              <p>Enter Master Password to Decrypt & View Whitelist Data:</p>
-              <input type="password" id="vaultPass" placeholder="Master Password..." />
-              <button onclick="unlockData()">[ UNLOCK VAULT ]</button>
-              <div id="err"></div>
-              <div id="output"></div>
+            html_ui = """<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>DragonHood Admin Vault</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { background: #071009; color: #00ff66; font-family: 'Courier New', Courier, monospace; padding: 30px; margin: 0; }
+    .box { max-width: 900px; margin: 0 auto; background: #050505; border: 1px solid rgba(0,255,102,0.4); padding: 25px; box-shadow: 0 0 25px rgba(0,255,102,0.1); border-radius: 4px; }
+    h2 { color: #ffb800; margin-top: 0; }
+    input { background: #00140a; border: 1px solid rgba(0,255,102,0.5); color: #00ff66; padding: 10px 14px; font-family: monospace; width: 340px; font-size: 13px; border-radius: 3px; }
+    input:focus { outline: none; border-color: #00ff66; box-shadow: 0 0 8px rgba(0,255,102,0.4); }
+    button { background: #00ff66; color: #000; font-weight: bold; border: none; padding: 10px 20px; cursor: pointer; border-radius: 3px; font-size: 12px; margin-left: 6px; }
+    button:hover { background: #33ff88; }
+    table { width: 100%; border-collapse: collapse; margin-top: 25px; font-size: 12px; }
+    th, td { border: 1px solid rgba(0,255,102,0.25); padding: 10px 12px; text-align: left; }
+    th { background: rgba(0,255,102,0.1); color: #fff; }
+    tr:nth-child(even) { background: rgba(0,255,102,0.02); }
+    #err { color: #ff5555; margin-top: 12px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2># DRAGONHOOD SECURE VAULT</h2>
+    <p style="color:rgba(0,255,102,0.7); font-size:13px;">Enter Master Password to Decrypt & View Whitelist Data:</p>
+    <input type="password" id="vaultPass" placeholder="Enter Master Password..." />
+    <button onclick="unlockData()">[ UNLOCK VAULT ]</button>
+    <div id="err"></div>
+    <div id="output"></div>
+  </div>
 
-              <script>
-                async function unlockData() {
-                  const p = document.getElementById('vaultPass').value;
-                  const key = new URLSearchParams(window.location.search).get('key');
-                  const res = await fetch('/api/admin/unlock', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ key: key, pass: p })
-                  });
-                  const json = await res.json();
-                  if (!res.ok) {
-                    document.getElementById('err').innerText = json.error || 'Galat password!';
-                    document.getElementById('output').innerHTML = '';
-                    return;
-                  }
-                  document.getElementById('err').innerText = '';
-                  if (json.data.length === 0) {
-                    document.getElementById('output').innerHTML = '<p>No records found yet.</p>';
-                    return;
-                  }
-                  let html = '<table><tr><th>Time (UTC)</th><th>Pass ID</th><th>X User</th><th>Wallet</th><th>Tweet</th></tr>';
-                  json.data.forEach(r => {
-                    html += `<tr><td>${r.timestamp||'-'}</td><td>${r.pass_id||'-'}</td><td>${r.x_username||'-'}</td><td>${r.wallet_address||'-'}</td><td><a href="${r.tweet_link}" target="_blank" style="color:#ffb800">Tweet Link</a></td></tr>`;
-                  });
-                  html += '</table>';
-                  document.getElementById('output').innerHTML = html;
-                }
-              </script>
-            </body>
-            </html>
-            """
+  <script>
+    async function unlockData() {
+      const p = document.getElementById('vaultPass').value;
+      const key = new URLSearchParams(window.location.search).get('key');
+      const errDiv = document.getElementById('err');
+      const outDiv = document.getElementById('output');
+      errDiv.innerText = '';
+
+      try {
+        const res = await fetch('/api/admin/unlock', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ key: key, pass: p })
+        });
+        const json = await res.json();
+        if (!res.ok) {
+          errDiv.innerText = json.error || 'Access Denied: Invalid Master Password!';
+          outDiv.innerHTML = '';
+          return;
+        }
+        if (!json.data || json.data.length === 0) {
+          outDiv.innerHTML = '<p style="margin-top:20px;">No whitelist records submitted yet.</p>';
+          return;
+        }
+        let html = '<table><tr><th>Timestamp (UTC)</th><th>Pass ID</th><th>X Username</th><th>Wallet Address</th><th>Tweet Link</th></tr>';
+        json.data.forEach(r => {
+          html += `<tr>
+            <td>${r.timestamp || '-'}</td>
+            <td style="color:#ffb800; font-weight:bold;">${r.pass_id || '-'}</td>
+            <td>${r.x_username || '-'}</td>
+            <td style="font-family:monospace; color:#fff;">${r.wallet_address || '-'}</td>
+            <td><a href="${r.tweet_link}" target="_blank" style="color:#00ff66;">Open Tweet</a></td>
+          </tr>`;
+        });
+        html += '</table>';
+        outDiv.innerHTML = html;
+      } catch (e) {
+        errDiv.innerText = 'Connection error: ' + e.message;
+      }
+    }
+  </script>
+</body>
+</html>"""
             raw_html = html_ui.encode("utf-8")
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
@@ -204,18 +204,18 @@ class Handler(SimpleHTTPRequestHandler):
             return
 
         # --------------------------------------------------
-        # VAULT UNLOCK (Password Verified Decryption)
+        # VAULT UNLOCK (Password Verified)
         # --------------------------------------------------
         if path == "/api/admin/unlock":
             req_key = data.get("key")
             req_pass = data.get("pass")
 
             if req_key != ADMIN_SECRET_KEY:
-                self.send_json(401, {"error": "Unauthorized key"})
+                self.send_json(401, {"error": "Unauthorized admin key"})
                 return
 
             if req_pass != DATA_ENCRYPTION_PASS:
-                self.send_json(403, {"error": "Galat password! Access denied."})
+                self.send_json(403, {"error": "Invalid Master Password! Access Denied."})
                 return
 
             records = []
@@ -327,10 +327,17 @@ class Handler(SimpleHTTPRequestHandler):
 
             try:
                 with urlopen(request, timeout=30) as response:
-                    self.send_json(response.status, json.loads(response.read().decode("utf-8")))
+                    raw = response.read()
+                    self.send_json(response.status, json.loads(raw.decode("utf-8")))
+                return
+            except HTTPError as error:
+                self.send_json(error.code, json.loads(error.read().decode("utf-8")))
+                return
+            except URLError as error:
+                self.send_json(502, {"error": "x_me_network_error", "details": str(error)})
                 return
             except Exception as error:
-                self.send_json(500, {"error": "x_me_error", "details": str(error)})
+                self.send_json(500, {"error": "x_me_server_error", "details": str(error)})
                 return
 
         self.send_error(404)

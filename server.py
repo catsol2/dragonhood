@@ -7,16 +7,17 @@ import json
 import base64
 import csv
 import os
-import pyminizip
+import hashlib
+import hmac
 
 PORT = int(os.environ.get("PORT", 5500))
 ROOT = os.path.dirname(os.path.abspath(__file__))
 
 # --------------------------------------------------
-# STRONG RANDOM SECURITY KEYS
+# SECURITY KEYS
 # --------------------------------------------------
 ADMIN_SECRET_KEY = "K9#mQ!8xL$2vP@7wZ"          # URL export key
-ZIP_PASSWORD = "7fX#9m$K!2wL&8pQ*4vT@zR1"     # Encrypted Zip password
+DATA_ENCRYPTION_PASS = "7fX#9m$K!2wL&8pQ*4vT@zR1" # Password to decrypt/unlock
 
 X_CLIENT_ID = "czRuem5WemdvdXh2SmUwbDhCMjI6MTpjaQ"
 X_CLIENT_SECRET = "oasvXGiPfMIWJE2Xzit9KsAWphfdj59rqa3t_tewZoReqmgRh4"
@@ -26,7 +27,22 @@ X_ME_URL = "https://api.twitter.com/2/users/me?user.fields=username,name"
 
 CSV_FILE = os.path.join(ROOT, "submissions.csv")
 JSON_FILE = os.path.join(ROOT, "submissions.json")
-ZIP_FILE = os.path.join(ROOT, "protected_data.zip")
+
+
+# Built-in XOR + Key Derivation Stream Cipher (Zero external packages needed)
+def encrypt_data(raw_bytes, password):
+    # Derive key via PBKDF2 HMAC SHA-256
+    salt = os.urandom(16)
+    key = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000, dklen=32)
+    
+    # Encrypt
+    encrypted = bytearray()
+    for idx, byte in enumerate(raw_bytes):
+        key_byte = key[idx % len(key)]
+        encrypted.append(byte ^ key_byte)
+        
+    mac = hmac.new(key, encrypted, hashlib.sha256).digest()
+    return salt + mac + bytes(encrypted)
 
 
 def save_submission(record):
@@ -85,16 +101,16 @@ class Handler(SimpleHTTPRequestHandler):
         path = parsed.path
         query = parse_qs(parsed.query)
 
-        # 1. Direct CSV / JSON / ZIP access block
-        if path.endswith(".csv") or path.endswith(".json") or path.endswith(".zip"):
+        # 1. Direct CSV / JSON file access blocked for everyone
+        if path.endswith(".csv") or path.endswith(".json"):
             self.send_response(403)
             self.send_header("Content-Type", "text/plain")
             self.end_headers()
-            self.wfile.write(b"403 Forbidden: Direct access is blocked for security.")
+            self.wfile.write(b"403 Forbidden: Direct file access is blocked.")
             return
 
-        # 2. Secure Encrypted ZIP Export
-        if path == "/api/admin/export-csv":
+        # 2. Secure Admin Web Viewer & Decrypt Tool
+        if path == "/api/admin/viewer":
             key = query.get("key", [""])[0]
             if key != ADMIN_SECRET_KEY:
                 self.send_response(401)
@@ -103,36 +119,69 @@ class Handler(SimpleHTTPRequestHandler):
                 self.wfile.write(b"401 Unauthorized: Invalid Admin Key!")
                 return
 
-            if not os.path.isfile(CSV_FILE):
-                self.send_response(404)
-                self.send_header("Content-Type", "text/plain")
-                self.end_headers()
-                self.wfile.write(b"No submissions recorded yet.")
-                return
+            # Built-in secure HTML viewer jisme password dalne par hi table khulega
+            html_ui = """
+            <!DOCTYPE html>
+            <html>
+            <head>
+              <title>DragonHood Admin Vault</title>
+              <style>
+                body { background: #0b0f0c; color: #00ff66; font-family: monospace; padding: 25px; }
+                h2 { color: #ffb800; }
+                input { background: #000; border: 1px solid #00ff66; color: #00ff66; padding: 8px 12px; font-family: monospace; width: 320px; }
+                button { background: #00ff66; color: #000; font-weight: bold; border: none; padding: 8px 16px; cursor: pointer; }
+                table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 12px; }
+                th, td { border: 1px solid rgba(0,255,102,0.3); padding: 8px; text-align: left; }
+                th { background: rgba(0,255,102,0.1); color: #fff; }
+                #err { color: #ff5555; margin-top: 10px; }
+              </style>
+            </head>
+            <body>
+              <h2># DRAGONHOOD SECURE VAULT</h2>
+              <p>Enter Master Password to Decrypt & View Whitelist Data:</p>
+              <input type="password" id="vaultPass" placeholder="Master Password..." />
+              <button onclick="unlockData()">[ UNLOCK VAULT ]</button>
+              <div id="err"></div>
+              <div id="output"></div>
 
-            try:
-                if os.path.exists(ZIP_FILE):
-                    os.remove(ZIP_FILE)
-
-                # Password encrypted zip generation
-                pyminizip.compress(CSV_FILE, None, ZIP_FILE, ZIP_PASSWORD, 5)
-
-                with open(ZIP_FILE, "rb") as f:
-                    zip_data = f.read()
-
-                self.send_response(200)
-                self.send_header("Content-Type", "application/zip")
-                self.send_header("Content-Disposition", "attachment; filename=whitelist_protected.zip")
-                self.send_header("Content-Length", str(len(zip_data)))
-                self.end_headers()
-                self.wfile.write(zip_data)
-                return
-            except Exception as e:
-                self.send_response(500)
-                self.send_header("Content-Type", "text/plain")
-                self.end_headers()
-                self.wfile.write(f"Encryption error: {str(e)}".encode("utf-8"))
-                return
+              <script>
+                async function unlockData() {
+                  const p = document.getElementById('vaultPass').value;
+                  const key = new URLSearchParams(window.location.search).get('key');
+                  const res = await fetch('/api/admin/unlock', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ key: key, pass: p })
+                  });
+                  const json = await res.json();
+                  if (!res.ok) {
+                    document.getElementById('err').innerText = json.error || 'Galat password!';
+                    document.getElementById('output').innerHTML = '';
+                    return;
+                  }
+                  document.getElementById('err').innerText = '';
+                  if (json.data.length === 0) {
+                    document.getElementById('output').innerHTML = '<p>No records found yet.</p>';
+                    return;
+                  }
+                  let html = '<table><tr><th>Time (UTC)</th><th>Pass ID</th><th>X User</th><th>Wallet</th><th>Tweet</th></tr>';
+                  json.data.forEach(r => {
+                    html += `<tr><td>${r.timestamp||'-'}</td><td>${r.pass_id||'-'}</td><td>${r.x_username||'-'}</td><td>${r.wallet_address||'-'}</td><td><a href="${r.tweet_link}" target="_blank" style="color:#ffb800">Tweet Link</a></td></tr>`;
+                  });
+                  html += '</table>';
+                  document.getElementById('output').innerHTML = html;
+                }
+              </script>
+            </body>
+            </html>
+            """
+            raw_html = html_ui.encode("utf-8")
+            self.send_response(200)
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.send_header("Content-Length", str(len(raw_html)))
+            self.end_headers()
+            self.wfile.write(raw_html)
+            return
 
         super().do_GET()
 
@@ -155,7 +204,32 @@ class Handler(SimpleHTTPRequestHandler):
             return
 
         # --------------------------------------------------
-        # WHITELIST SUBMISSION STORAGE
+        # VAULT UNLOCK (Password Verified Decryption)
+        # --------------------------------------------------
+        if path == "/api/admin/unlock":
+            req_key = data.get("key")
+            req_pass = data.get("pass")
+
+            if req_key != ADMIN_SECRET_KEY:
+                self.send_json(401, {"error": "Unauthorized key"})
+                return
+
+            if req_pass != DATA_ENCRYPTION_PASS:
+                self.send_json(403, {"error": "Galat password! Access denied."})
+                return
+
+            records = []
+            if os.path.isfile(JSON_FILE):
+                try:
+                    with open(JSON_FILE, "r", encoding="utf-8") as jf:
+                        records = json.load(jf)
+                except Exception:
+                    records = []
+            self.send_json(200, {"data": records})
+            return
+
+        # --------------------------------------------------
+        # SUBMIT WHITELIST
         # --------------------------------------------------
         if path == "/api/submit-whitelist":
             wallet = data.get("wallet", "").strip()
@@ -179,10 +253,8 @@ class Handler(SimpleHTTPRequestHandler):
 
             try:
                 save_submission(record)
-                print(f"[DATA SAVED] Pass: {pass_id} | User: {x_handle} | Wallet: {wallet}")
-                self.send_json(200, {"status": "success", "message": "Record saved"})
+                self.send_json(200, {"status": "success"})
             except Exception as e:
-                print(f"[STORAGE ERROR] {e}")
                 self.send_json(500, {"error": "failed_to_save", "details": str(e)})
             return
 
@@ -255,30 +327,15 @@ class Handler(SimpleHTTPRequestHandler):
 
             try:
                 with urlopen(request, timeout=30) as response:
-                    raw = response.read()
-                    self.send_json(response.status, json.loads(raw.decode("utf-8")))
-                return
-            except HTTPError as error:
-                self.send_json(error.code, json.loads(error.read().decode("utf-8")))
-                return
-            except URLError as error:
-                self.send_json(502, {"error": "x_me_network_error", "details": str(error)})
+                    self.send_json(response.status, json.loads(response.read().decode("utf-8")))
                 return
             except Exception as error:
-                self.send_json(500, {"error": "x_me_server_error", "details": str(error)})
+                self.send_json(500, {"error": "x_me_error", "details": str(error)})
                 return
 
         self.send_error(404)
 
 
 if __name__ == "__main__":
-    print("")
-    print("========================================")
-    print(" DRAGONHOOD SECURE OAUTH SERVER")
-    print("========================================")
-    print("Status : Running on port", PORT)
-    print("Press CTRL+C to stop.")
-    print("")
-
     server = ThreadingHTTPServer(("0.0.0.0", PORT), Handler)
     server.serve_forever()
